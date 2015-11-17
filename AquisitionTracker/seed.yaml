@@ -1,58 +1,58 @@
 ---
 # - Log Entry
-- timestamp: :_t1
+- timestamp: ':_t1'
   command_name: create_acquirer
   facts:
-    - [:assert, :_mike, 'person/name', 'Mike']
-    - [:assert, :_mike, 'person/join_timestamp', :_t1]
-- timestamp: :_t2
+    - [':assert', ':_mike', 'person/name', 'Mike']
+    - [':assert', ':_mike', 'person/join_timestamp', ':_t1']
+- timestamp: ':_t2'
   command_name: acquire_server
   facts:
     #- assert/retract, uuid, attribute name, value
     #- introduce novel parts
-    - [:assert, :'_E3-1231', 'processor/model_number', 'E3-1231']
-    - [:assert, :'_E3-1231', 'processor/speed', '3.4']
-    - [:assert, :'_E3-1231', 'processor/wattage', 80]
-    - [:assert, :'_poweredge13_ram', 'memory/type', 'rdimm']
-    - [:assert, :'_poweredge13_ram', 'memory/capacity_gb', 16]
-    - [:assert, :'_poweredge13_ram', 'memory/modelnumber', 'poweredge13-16']
-    - [:assert, :'_dellSata6', 'disk/capacity_gb', 500]
-    - [:assert, :'_dellSata6', 'disk/interface', 'sata']
-    - [:assert, :'_dellSata6', 'disk/speed', '7.2']
-    - [:assert, :'_poweredge13', 'chassis/model', 'R720']
+    - [':assert', ':_E3-1231', 'processor/model_number', 'E3-1231']
+    - [':assert', ':_E3-1231', 'processor/speed', '3.4']
+    - [':assert', ':_E3-1231', 'processor/wattage', 80]
+    - [':assert', ':_poweredge13_ram', 'memory/type', 'rdimm']
+    - [':assert', ':_poweredge13_ram', 'memory/capacity_gb', 16]
+    - [':assert', ':_poweredge13_ram', 'memory/modelnumber', 'poweredge13-16']
+    - [':assert', ':_dellSata6', 'disk/capacity_gb', 500]
+    - [':assert', ':_dellSata6', 'disk/interface', 'sata']
+    - [':assert', ':_dellSata6', 'disk/speed', '7.2']
+    - [':assert', ':_poweredge13', 'chassis/model', 'R720']
     # Unit Acquisition
-    - [:assert, :'_E3-1231_1', 'acquisition/timestamp', :_t2]
-    - [:assert, :'_E3-1231_1', 'acquisition/part_id', :'_E3-1231']
-    - [:assert, :'_E3-1231_1', 'acquisition/acquirer', :_mike]
-    - [:assert, :'_poweredge13_ram_1', 'acquisition/timestamp', :_t2]
-    - [:assert, :'_poweredge13_ram_1','acquisition/part_id', :'_poweredge13_ram']
-    - [:assert, :'_poweredge13_ram_1', 'acquisition/acquirer', :_mike]
-    - [:assert, :'_dellSata6_1', 'acquisition/timestamp', :_t2]
-    - [:assert, :'_dellSata6_1','acquisition/part_id', :'_dellSata6']
-    - [:assert, :'_dellSata6_1', 'acquisition/acquirer', :_mike]
-    - [:assert, :'_poweredge13_1', 'acquisition/timestamp', :_t2]
-    - [:assert, :'_poweredge13_1', 'acquisition/part_id', :'_poweredge13']
-    - [:assert, :'_poweredge13_1', 'acquisition/acquirer', :_mike]
+    - [':assert', ':_E3-1231_1', 'acquisition/timestamp', ':_t2']
+    - [':assert', ':_E3-1231_1', 'acquisition/part_id', '':_'E3-1231']
+    - [':assert', ':_E3-1231_1', 'acquisition/acquirer', ':_mike']
+    - [':assert', ':_poweredge13_ram_1', 'acquisition/timestamp', ':_t2']
+    - [':assert', ':_poweredge13_ram_1','acquisition/part_id', ':_poweredge13_ram']
+    - [':assert', ':_poweredge13_ram_1', 'acquisition/acquirer', ':_mike']
+    - [':assert', ':_dellSata6_1', 'acquisition/timestamp', ':_t2']
+    - [':assert', ':_dellSata6_1','acquisition/part_id', ':_dellSata6']
+    - [':assert', ':_dellSata6_1', 'acquisition/acquirer', ':_mike']
+    - [':assert', ':_poweredge13_1', 'acquisition/timestamp', ':_t2']
+    - [':assert', ':_poweredge13_1', 'acquisition/part_id', '_poweredge13']
+    - [':assert', ':_poweredge13_1', 'acquisition/acquirer', ':_mike']
     # Items are all grouped together
-    - [:assert, :'_server1', 'group/units', [:'_E3-1231_1', :'_poweredge13_ram_1', :'_dellSata6_1', :'_poweredge13_1']
-- timestamp: :_t3
+    - [':assert', ':_server1', 'group/units', [':_E3-1231_1', ':_poweredge13_ram_1', ':_dellSata6_1', ':_poweredge13_1']
+- timestamp: ':_t3'
   command_name: deploy_server
   facts:
-    - [:assert, :_deploy1, 'deployment/group_id', :'_server1']
-    - [:assert, :_deploy1, 'deployment/deployer_id', :_mike]
-    - [:assert, :_deploy1, 'deployment/timestamp', :_t3]
+    - [':assert', ':_deploy1', 'deployment/group_id', ':_server1']
+    - [':assert', ':_deploy1', 'deployment/deployer_id', ':_mike']
+    - [':assert', ':_deploy1', 'deployment/timestamp', ':_t3']
 
-- timestamp: :_t4
+- timestamp: ':_t4'
   command_name: acquire_part
   facts:
-    - [:assert, :'_poweredge13_ram_2', 'acquisition/timestamp', :_t4]
-    - [:assert, :'_poweredge13_ram_2','acquisition/part_id', :'_poweredge13_ram']
-    - [:assert, :'_poweredge13_ram_2', 'acquisition/acquirer', :_mike]
+    - [':assert', ':_poweredge13_ram_2', 'acquisition/timestamp', ':_t4']
+    - [':assert', ':_poweredge13_ram_2','acquisition/part_id', ':_poweredge13_ram']
+    - [':assert', ':_poweredge13_ram_2', 'acquisition/acquirer', ':_mike']
 
-- timestamp: :_t5
+- timestamp: ':_t5'
   command_name: repair_deployed_server
   facts:
-    - [:assert, :'_repair1', 'repair/repairer', :_mike]
-    - [:assert, :'_repair1', 'repair/group', :'_server1']
-    - [:assert, :'_repair1', 'repair/timestamp', :_t5]
-    - [:assert, :'_server1', 'group/units', [:'_E3-1231_1', :'_poweredge13_ram_2', :'_dellSata6_1', :'_poweredge13_1']
+    - [':assert', ':_repair1', 'repair/repairer', ':_mike']
+    - [':assert', ':_repair1', 'repair/group', ':_server1']
+    - [':assert', ':_repair1', 'repair/timestamp', ':_t5']
+    - [':assert', ':_server1', 'group/units', [':_E3-1231_1', ':_poweredge13_ram_2', ':_dellSata6_1', ':_poweredge13_1']
