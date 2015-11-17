@@ -20,7 +20,7 @@ def substitute_real_timestamps( journal_entries, epoc )
   increment = 60
   journal_entries.each do |entry|
     entry['timestamp'] = epoc + entry['timestamp'].split('t')[1].to_i * increment
-    # Can change this to just entry['keys'] if needed
+    # Can change this to just entry['facts'] if needed
     entry.keys do |fact|
       fact.map! { |e| e.match(/\A:_t\d+\z/) ? e.split('t')[1].to_i * increment : e }
     end
