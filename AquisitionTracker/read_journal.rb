@@ -14,11 +14,16 @@ require 'time'
   ':_server1': 'B42C6EA7-15FA-4931-9F24-720F89357D62',
   ':_deploy1': 'A7E44B53-2511-4944-8BA1-DB58E940CA89',
 }
+
 # input journal entries output the same
 def substitute_real_timestamps( journal_entries, epoc )
   increment = 60
   journal_entries.each do |entry|
     entry['timestamp'] = epoc + entry['timestamp'].split('t')[1].to_i * increment
+    # Can change this to just entry['keys'] if needed
+    entry.keys do |fact|
+      fact.map! { |e| e.match(/\A:_t\d+\z/) ? e.split('t')[1].to_i * increment : e }
+    end
   end
 end
 
