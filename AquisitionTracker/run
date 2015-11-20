@@ -1,0 +1,18 @@
+#!/bin/bash
+
+function test {
+  bundle exec ruby all.test.rb
+}
+
+function lint {
+  bundle exec rubocop
+}
+
+function build {
+  lint
+  test
+}
+
+if [[ $# > 0 ]]; then
+  eval "$1" "${@:2}"
+fi

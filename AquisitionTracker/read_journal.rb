@@ -9,6 +9,7 @@ def substitute_real_timestamps!(journal_entry, epoc, increment = 60)
   journal_entry.keys do |fact|
     fact.map! { |e| e.match(/\A:_t\d+\z/) ? e.split('t')[1].to_i * increment : e }
   end
+  journal_entry
 end
 
 def substitute_real_fact_uuids(journal_entries, uuid_map)
