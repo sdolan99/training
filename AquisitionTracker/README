@@ -1,0 +1,9 @@
+Running Tests
+----
+
+To run tests: `ruby all.test.rb`
+
+
+Linter
+----
+To verify formatting etc, use `rubocop`: `./rubocop`
