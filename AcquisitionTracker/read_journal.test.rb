@@ -14,10 +14,9 @@ end
 
 describe 'substtute_real_fact_uuids' do
   it 'Works for :_mike' do
-    maplist = { ':_mike' => '45736D07-94F9-4DB8-BAC6-02DC455B3B73' }
     given = { 'facts' => [[':assert', ':_mike', 'person/name', 'Mike']] }
-    expect = { 'facts' => [[':assert', '45736D07-94F9-4DB8-BAC6-02DC455B3B73', 'person/name', 'Mike']] }
-    actual = substitute_real_fact_uuids!(given, maplist)
+    expect = { 'facts' => [[':assert', 'afba69ea8fd784d2ed85080dd3adc127', 'person/name', 'Mike']] }
+    actual = substitute_real_fact_uuids!(given)
     assert_equal expect, actual
   end
 end
