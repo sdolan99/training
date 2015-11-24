@@ -21,7 +21,9 @@ end
 
 def substitute_real_fact_uuids!(journal_entry)
   journal_entry['facts'].each do |fact|
-    fact.map! { |e| e.to_s.match(/\A:_/) ? Digest::SHA1.hexdigest(e).slice(0,32) : e }
+    fact.map! do |e|
+      e.to_s.match(/\A:_/) ? Digest::SHA1.hexdigest(e).slice(0, 32) : e
+    end
   end
   journal_entry
 end

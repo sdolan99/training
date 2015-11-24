@@ -24,7 +24,7 @@ facts:
 - [':assert', ':_poweredge13', 'chassis/model', 'R720']
 # Unit Acquisition
 - [':assert', ':_E3-1231_1', 'acquisition/timestamp', ':_t2']
-- [':assert', ':_E3-1231_1', 'acquisition/part_id', '':_'E3-1231']
+- [':assert', ':_E3-1231_1', 'acquisition/part_id', ':_E3-1231']
 - [':assert', ':_E3-1231_1', 'acquisition/acquirer', ':_mike']
 - [':assert', ':_poweredge13_ram_1', 'acquisition/timestamp', ':_t2']
 - [':assert', ':_poweredge13_ram_1','acquisition/part_id', ':_poweredge13_ram']
@@ -33,7 +33,7 @@ facts:
 - [':assert', ':_dellSata6_1','acquisition/part_id', ':_dellSata6']
 - [':assert', ':_dellSata6_1', 'acquisition/acquirer', ':_mike']
 - [':assert', ':_poweredge13_1', 'acquisition/timestamp', ':_t2']
-- [':assert', ':_poweredge13_1', 'acquisition/part_id', '_poweredge13']
+- [':assert', ':_poweredge13_1', 'acquisition/part_id', ':_poweredge13']
 - [':assert', ':_poweredge13_1', 'acquisition/acquirer', ':_mike']
 # Items are all grouped together
 - [':assert', ':_server1', 'group/units', [':_E3-1231_1', ':_poweredge13_ram_1', ':_dellSata6_1', ':_poweredge13_1']]
