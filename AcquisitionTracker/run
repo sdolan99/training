@@ -13,6 +13,14 @@ function build {
   test
 }
 
+function aquisition_tracker {
+  be ruby main.rb "$@"
+}
+
+function be {
+  bundle exec "$@"
+}
+
 if [[ $# -gt 0 ]]; then
   eval "$1" "${@:2}"
 fi
