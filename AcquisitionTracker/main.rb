@@ -7,13 +7,7 @@ module AquisitionTracker
   SEED_PATH = 'seed.yaml'
   # cli entry point
   def self.run(args, journal_path = SEED_PATH)
-    journal_entries = load_journal_entries journal_path
-    hydrate journal_entries
-    # handle the dump_journal command
-    if args.first == 'dump_journal'
-      puts YAML.dump_stream(*journal_entries)
-      exit
-    end
+    hydrate load_journal_entries journal_path
     # handle inventory_status report
     if args.first == 'inventory_status'
       Queries.inventory_status_report
