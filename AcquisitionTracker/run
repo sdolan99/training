@@ -5,7 +5,7 @@ function test {
 }
 
 function lint {
-  bundle exec rubocop
+  bundle exec rubocop "$@"
 }
 
 function build {

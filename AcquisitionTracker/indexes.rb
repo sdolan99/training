@@ -4,8 +4,8 @@ module AquisitionTracker
   module Indexes
     # an index accessor that lazily creates maps
     def self.[](index_name)
-      @indexes ||= Hash.new
-      @indexes[index_name] ||= Hash.new
+      @indexes ||= {}
+      @indexes[index_name] ||= {}
       @indexes[index_name]
     end
   end

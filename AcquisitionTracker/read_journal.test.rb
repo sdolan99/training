@@ -9,14 +9,14 @@ describe 'substitute_real_timestamps' do
     given = {
       'timestamp' => ':_t1',
       'facts' => [
-        [ ':_t1' ]
+        [':_t1'],
       ],
     }
     expect = {
       'timestamp' => Time.parse('2015-11-13 00:01:00 -0800'),
       'facts' => [
-        [ Time.parse('2015-11-13 00:01:00 -0800') ]
-      ]
+        [Time.parse('2015-11-13 00:01:00 -0800')],
+      ],
     }
     epoc = Time.parse('2015-11-13 00:00:00 -0800')
     actual = substitute_real_timestamps!(given, epoc)
