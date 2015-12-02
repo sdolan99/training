@@ -26,8 +26,7 @@ module AquisitionTracker
     def substitute_real_timestamps!(journal_entry, epoc = Time.now, increment = 60)
       journal_entry['timestamp'] = transform_timestamp(journal_entry['timestamp'], epoc, increment)
 
-      # Can change this to just entry['facts'] if needed
-      journal_entry.keys do |fact|
+      journal_entry['facts'].each do |fact|
         fact.map! { |e| transform_timestamp(e, epoc, increment) }
       end
       journal_entry
