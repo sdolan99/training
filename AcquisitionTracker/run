@@ -5,7 +5,7 @@ function test {
 }
 
 function lint {
-  bundle exec rubocop
+  bundle exec rubocop "$@"
 }
 
 function build {
@@ -13,6 +13,14 @@ function build {
   test
 }
 
-if [[ $# > 0 ]]; then
+function aquisition_tracker {
+  be ruby main.rb "$@"
+}
+
+function be {
+  bundle exec "$@"
+}
+
+if [[ $# -gt 0 ]]; then
   eval "$1" "${@:2}"
 fi
