@@ -2,9 +2,10 @@
 module AquisitionTracker
   # Functions that filter the indexes
   module Queries
-    def self.inventory_status(_indexes = Indexes)
+    def self.inventory_status(indexes = Indexes)
       # fetches, loops, branches etc
       # return data structure
+      puts indexes['acquisition_entities']
     end
 
     def self.inventory_status_report(_io = $stdout, _indexes = Indexes)

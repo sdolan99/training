@@ -1,12 +1,20 @@
 # Application Namespace
 module AquisitionTracker
   # In-memory, indexed representation of the application's data
-  module Indexes
-    # an index accessor that lazily creates maps
-    def self.[](index_name)
-      @indexes ||= {}
-      @indexes[index_name] ||= {}
-      @indexes[index_name]
+  class TwoLevelHash
+    def initialize
+     @toplevel = {}
+    end
+
+    def [](index_name)
+      @toplevel[index_name] ||= {}
+      @toplevel[index_name]
     end
   end
+  Indexes = TwoLevelHash.new
+end
+
+if $PROGRAM_NAME == __FILE__
+  AquisitionTracker::Indexes['a']['b'] = 'c'
+  puts AquisitionTracker::Indexes['a']['b']
 end

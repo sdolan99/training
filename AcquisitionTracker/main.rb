@@ -40,7 +40,8 @@ module AquisitionTracker
     journal_entries.each do |journal_entry|
       command_name = journal_entry['command_name']
       facts = journal_entry['facts']
-      Commands.send('index_' + command_name, facts.map { |t| Fact.new(*t) })
+      # Commands.send('index_' + command_name, facts.map { |t| Fact.new(*t) })
+      Commands.send('index_' + command_name, facts)
     end
   end
 
