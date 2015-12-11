@@ -1,7 +1,8 @@
 #!/bin/bash
 
 function test {
-  bundle exec ruby all.test.rb
+  local file=${1-all.test.rb}
+  bundle exec ruby $file
 }
 
 function lint {

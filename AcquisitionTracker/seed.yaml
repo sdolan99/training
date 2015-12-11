@@ -7,6 +7,8 @@ facts:
 - [':assert', ':_mike', 'person/join_timestamp', ':_t1']
 
 ---
+# - Learn/Acquire 4 parts
+# - Group parts to the server
 timestamp: ':_t2'
 command_name: acquire_server
 facts:
@@ -61,4 +63,5 @@ facts:
 - [':assert', ':_repair1', 'repair/repairer', ':_mike']
 - [':assert', ':_repair1', 'repair/group', ':_server1']
 - [':assert', ':_repair1', 'repair/timestamp', ':_t5']
+- [':revert', '_poweredge13_ram_1']
 - [':assert', ':_server1', 'group/units', [':_E3-1231_1', ':_poweredge13_ram_2', ':_dellSata6_1', ':_poweredge13_1']]

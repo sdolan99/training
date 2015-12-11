@@ -1,7 +1,9 @@
+
 # Application Namespace
 module AquisitionTracker
   # In-memory, indexed representation of the application's data
   class TwoLevelHash
+    extend Forwardable
     def initialize
       @toplevel = {}
     end
@@ -10,6 +12,8 @@ module AquisitionTracker
       @toplevel[index_name] ||= {}
       @toplevel[index_name]
     end
+
+    def_delegator :@toplevel, :keys
   end
   Indexes = TwoLevelHash.new
 end

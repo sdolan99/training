@@ -25,32 +25,71 @@ module AquisitionTracker
       # 2. add group entities to indexes[:aquisition_entities]
       part_ids = []
       acquisition_ids = []
+      group_ids = []
       facts.each do |(_operation, id, property, value)|
         indexes['entities'][id] ||= {}
         indexes['entities'][id]['id'] ||= id
         indexes['entities'][id][property] = value
         part_ids << id if part?(property)
         acquisition_ids << id if acquisition?(property)
+        group_ids << id if group?(property)
       end
 
       part_ids.each do |id|
-        indexes['parts_entities'][id] = indexes['entities'][id]
+        indexes['part_entities'][id] = indexes['entities'][id]
       end
+
       acquisition_ids.each do |id|
         indexes['acquisition_entities'][id] = indexes['entities'][id]
       end
     end
 
-    def self.index_deploy_server(_facts, _indexes = Indexes)
-      warn 'index_deploy_server not implemented'
+    def self.index_deploy_server(facts, indexes = Indexes)
+      deployment_ids = []
+      facts.each do |(_operation, id, property, value)|
+        indexes['entities'][id] ||= {}
+        indexes['entities'][id]['id'] ||= id
+        indexes['entities'][id][property] = value
+        deployment_ids << id if deployment?(property)
+      end
+
+      deployment_ids.each do |id|
+        indexes['deployment_entities'][id] = indexes['entities'][id]
+      end
     end
 
-    def self.index_acquire_part(_facts, _indexes = Indexes)
-      warn 'index_acquire_part not implemented'
+    def self.index_acquire_part(facts, indexes = Indexes)
+      acquisition_ids = []
+      facts.each do |(_operation, id, property, value)|
+        indexes['entities'][id] ||= {}
+        indexes['entities'][id]['id'] ||= id
+        indexes['entities'][id][property] = value
+        acquisition_ids << id if acquisition?(property)
+      end
+
+      acquisition_ids.each do |id|
+        indexes['acquisition_entities'][id] = indexes['entities'][id]
+      end
     end
 
-    def self.index_repair_deployed_server(_facts, _indexes = Indexes)
-      warn 'index_repair_deployed_server not implemented'
+    def self.index_repair_deployed_server(facts, indexes = Indexes)
+      repair_ids = []
+      asserts(facts).each do |(_operation, id, property, value)|
+        indexes['entities'][id] ||= {}
+        indexes['entities'][id]['id'] ||= id
+        indexes['entities'][id][property] = value
+        repair_ids << id if repair?(property)
+      end
+
+      reverts(facts).each do |(_operation, id)|
+        indexes.keys do |key|
+          indexes[key].delete(id)
+        end
+      end
+
+      repair_ids.each do |id|
+        indexes['repair_entities'][id] = indexes['entities'][id]
+      end
     end
 
     PARTS = %w(processor memory disk chassis)
@@ -63,8 +102,28 @@ module AquisitionTracker
       acquirers_list.include?(attribute_name.split('/')[0])
     end
 
+    def self.asserts(facts)
+      facts.select { |fact| fact[0].eql?(':assert') }
+    end
+
+    def self.reverts(facts)
+      facts.select { |fact| fact[0].eql?(':revert') }
+    end
+
     def self.acquisition?(attribute_name)
       attribute_name.split('/')[0].eql?('acquisition')
+    end
+
+    def self.group?(attribute_name)
+      attribute_name.split('/')[0].eql?('group')
+    end
+
+    def self.deployment?(attribute_name)
+      attribute_name.split('/')[0].eql?('deployment')
+    end
+
+    def self.repair?(attribute_name)
+      attribute_name.split('/')[0].eql?('repair')
     end
   end
 end

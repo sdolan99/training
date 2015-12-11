@@ -37,7 +37,14 @@ module AquisitionTracker
     def substitute_real_fact_uuids!(journal_entry)
       journal_entry['facts'].each do |fact|
         fact.map! do |e|
-          e.to_s.match(/\A:_/) ? Digest::SHA1.hexdigest(e).slice(0, 32) : e
+          if e.respond_to?(:each)
+            e.map! do |v|
+              v.to_s.match(/\A:_/) ?
+                Digest::SHA1.hexdigest(v).slice(0, 32) : e
+            end
+          else
+            e.to_s.match(/\A:_/) ? Digest::SHA1.hexdigest(e).slice(0, 32) : e
+          end
         end
       end
       journal_entry
