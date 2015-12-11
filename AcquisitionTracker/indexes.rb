@@ -3,7 +3,7 @@ module AquisitionTracker
   # In-memory, indexed representation of the application's data
   class TwoLevelHash
     def initialize
-     @toplevel = {}
+      @toplevel = {}
     end
 
     def [](index_name)
