@@ -35,22 +35,25 @@ module AquisitionTracker
 
     # journal_entry -> journal_entry
     def substitute_real_fact_uuids!(journal_entry)
-      journal_entry['facts'].each do |fact|
-        fact.map! do |e|
-          if e.respond_to?(:each)
-            e.map! do |v|
-              v.to_s.match(/\A:_/) ?
-                Digest::SHA1.hexdigest(v).slice(0, 32) : e
-            end
-          else
-            e.to_s.match(/\A:_/) ? Digest::SHA1.hexdigest(e).slice(0, 32) : e
-          end
-        end
+      journal_entry['facts'].map! do |fact|
+        substitute_uuid!(fact)
       end
       journal_entry
     end
     module_function :substitute_real_fact_uuids!
-  end
+
+    def substitute_uuid!(value_node)
+      if value_node.respond_to?(:each)
+        value_node.map! do |v|
+          substitute_uuid!(v)
+        end
+      else
+        value_node.to_s.match(/\A:_/) ?
+          Digest::SHA1.hexdigest(value_node).slice(0, 32) : value_node
+      end
+    end
+    module_function :substitute_uuid!
+  end # /ReadJournal
 end
 
 if $PROGRAM_NAME == __FILE__
