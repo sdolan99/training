@@ -1,8 +1,9 @@
-require 'minitest'
+require 'minitest/autorun'
 require_relative 'commands'
 require_relative 'indexes'
 
 include AcquisitionTracker
+
 describe 'Can acquire a server' do
   it 'Adds elements to the index' do
     given = [
@@ -24,7 +25,7 @@ describe 'Can acquire a server' do
 
     assert_equal e_1, given_index['entities']['eid-1']
     assert_equal e_2, given_index['entities']['eid-2']
-    assert_equal e_1, given_index['parts_entities']['eid-1']
+    assert_equal e_1, given_index['part_entities']['eid-1']
     assert_equal ae_1, given_index['acquisition_entities']['eid-1-1']
   end
 end
