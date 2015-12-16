@@ -1,6 +1,6 @@
 
 # Application Namespace
-module AquisitionTracker
+module AcquisitionTracker
   # In-memory, indexed representation of the application's data
   class TwoLevelHash
     extend Forwardable
@@ -19,6 +19,6 @@ module AquisitionTracker
 end
 
 if $PROGRAM_NAME == __FILE__
-  AquisitionTracker::Indexes['a']['b'] = 'c'
-  puts AquisitionTracker::Indexes['a']['b']
+  AcquisitionTracker::Indexes['a']['b'] = 'c'
+  puts AcquisitionTracker::Indexes['a']['b']
 end

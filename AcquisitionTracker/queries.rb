@@ -1,8 +1,8 @@
 # Application Namespace
-module AquisitionTracker
+module AcquisitionTracker
   # Functions that filter the indexes
   module Queries
-    def self.inventory_status(indexes = Indexes)
+    def self.inventory_status(_indexes = Indexes)
       # fetches, loops, branches etc
       # return data structure
       # puts indexes['acquisition_entities']

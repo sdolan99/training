@@ -2,7 +2,7 @@ require 'minitest'
 require_relative 'commands'
 require_relative 'indexes'
 
-include AquisitionTracker
+include AcquisitionTracker
 describe 'Can acquire a server' do
   it 'Adds elements to the index' do
     given = [

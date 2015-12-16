@@ -2,7 +2,7 @@ require 'time'
 require 'minitest/autorun'
 require_relative 'read_journal'
 
-include AquisitionTracker::ReadJournal
+include AcquisitionTracker::ReadJournal
 
 describe 'substitute_real_timestamps' do
   it 'Works for :t_1' do
@@ -32,7 +32,10 @@ describe 'substtute_real_fact_uuids' do
     ] }
     expect = { 'facts' => [
       [':assert', 'afba69ea8fd784d2ed85080dd3adc127', 'person/name', 'Mike'],
-      [':assert', '7eec67f094d3b19785d37a75f60fd689', 'group/units',['afba69ea8fd784d2ed85080dd3adc127', ['afba69ea8fd784d2ed85080dd3adc127']]],
+      [':assert', '7eec67f094d3b19785d37a75f60fd689', 'group/units',
+       ['afba69ea8fd784d2ed85080dd3adc127', ['afba69ea8fd784d2ed85080dd3adc127']
+       ]
+      ],
     ] }
     actual = substitute_real_fact_uuids!(given)
     assert_equal expect, actual

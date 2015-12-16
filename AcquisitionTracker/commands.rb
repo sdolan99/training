@@ -1,11 +1,11 @@
 require_relative 'indexes'
 
 # Application Namespace
-module AquisitionTracker
+module AcquisitionTracker
   # Methods that mutate the application's data
   module Commands
     def self.index_create_acquirer(facts, indexes = Indexes)
-      # this command asserts attributes about a *new* aquirer
+      # this command asserts attributes about a *new* acquirer
       acquirer_ids = []
       facts.each do |(_operation, id, property, value)|
         indexes['entities'][id] ||= {}
@@ -15,14 +15,14 @@ module AquisitionTracker
       end
 
       acquirer_ids.each do |id|
-        indexes['aquirer_entities'][id] = indexes['entities'][id]
+        indexes['acquirer_entities'][id] = indexes['entities'][id]
       end
     end
     # module_function :index_create_acquirer
 
     def self.index_acquire_server(facts, indexes = Indexes)
-      # 2. add aquisition entities to indexes[:aquisition_entities]
-      # 2. add group entities to indexes[:aquisition_entities]
+      # 2. add acquisition entities to indexes[:acquisition_entities]
+      # 2. add group entities to indexes[:acquisition_entities]
       part_ids = []
       acquisition_ids = []
       group_ids = []

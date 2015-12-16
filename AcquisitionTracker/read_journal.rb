@@ -3,7 +3,7 @@ require 'yaml'
 require 'digest/sha1'
 
 # Application Namespace
-module AquisitionTracker
+module AcquisitionTracker
   # Functions to transform seed journal entries into "real" ones
   module ReadJournal
     # journal_entries -> journal_entries
@@ -48,8 +48,11 @@ module AquisitionTracker
           substitute_uuid!(v)
         end
       else
-        value_node.to_s.match(/\A:_/) ?
-          Digest::SHA1.hexdigest(value_node).slice(0, 32) : value_node
+        if value_node.to_s.match(/\A:_/)
+          Digest::SHA1.hexdigest(value_node).slice(0, 32)
+        else
+          value_node
+        end
       end
     end
     module_function :substitute_uuid!
@@ -57,7 +60,7 @@ module AquisitionTracker
 end
 
 if $PROGRAM_NAME == __FILE__
-  include AquisitionTracker::ReadJournal
+  include AcquisitionTracker::ReadJournal
   # read yaml from stdin, transform, write yaml to stdout
   puts YAML.dump_stream(*transform_seed_entries(YAML.load_stream($stdin.read)))
 end

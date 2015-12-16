@@ -3,7 +3,7 @@ require_relative 'commands'
 require_relative 'queries'
 
 # Application Namespace
-module AquisitionTracker
+module AcquisitionTracker
   SEED_PATH = 'seed.yaml'
   # cli entry point
   def self.run(args, journal_path = SEED_PATH)
@@ -46,4 +46,4 @@ module AquisitionTracker
 end
 
 # only invoke run if this module used as entry point from the shell
-AquisitionTracker.run(ARGV) if $PROGRAM_NAME == __FILE__
+AcquisitionTracker.run(ARGV) if $PROGRAM_NAME == __FILE__
