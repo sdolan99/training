@@ -18,7 +18,7 @@ module AcquisitionTracker
     MIN_QUANTITY = 3
     def self.inventory_status_report(_io = $stdout, indexes = Indexes)
       data = inventory_status(indexes)
-      order = data.select { |k, v| v['count'] < MIN_QUANTITY }
+      order = data.select { |_, v| v['count'] < MIN_QUANTITY }
       order
     end
   end
