@@ -1,6 +1,7 @@
 require_relative 'read_journal'
 require_relative 'commands'
 require_relative 'queries'
+require_relative 'ui'
 
 # Application Namespace
 module AcquisitionTracker
@@ -10,7 +11,8 @@ module AcquisitionTracker
     hydrate load_journal_entries journal_path
     # handle inventory_status report
     if args.first == 'inventory_status'
-      Queries.inventory_status_report
+      data = Queries.inventory_status_report
+      Ui.inventory_status_report(data)
       exit
     end
     # if we got here the cli args couldn't be passed, show help

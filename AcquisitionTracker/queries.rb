@@ -2,16 +2,24 @@
 module AcquisitionTracker
   # Functions that filter the indexes
   module Queries
-    def self.inventory_status(_indexes = Indexes)
-      # fetches, loops, branches etc
-      # return data structure
-      # puts indexes['acquisition_entities']
+    def self.inventory_status(indexes = Indexes)
+      parts = TwoLevelHash.new
+      # find all the purchased parts
+      indexes['acquisition_entities'].each do |_, properties|
+        # Can this function be a map?
+        parts[properties['acquisition/part_id']]['count'] ||= 0
+        parts[properties['acquisition/part_id']]['count'] += 1
+        parts[properties['acquisition/part_id']]['properties'] =
+          indexes['entities'][properties['acquisition/part_id']]
+      end
+      parts
     end
 
-    def self.inventory_status_report(_io = $stdout, _indexes = Indexes)
-      _data = inventory_status
-      # write formatted data to io object ...
-      warn 'inventory_status_report not implemented'
+    MIN_QUANTITY = 3
+    def self.inventory_status_report(_io = $stdout, indexes = Indexes)
+      data = inventory_status(indexes)
+      order = data.select { |k, v| v['count'] < MIN_QUANTITY }
+      order
     end
   end
 end
