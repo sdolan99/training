@@ -10,8 +10,20 @@ module AcquisitionTracker
 
       data.each do |i, p|
         next if i == 'min_quantity'
-        puts "#{p['count']} / #{min_quantity}   -  #{p['properties']}"
+        type = get_type(p['properties'])
+        puts "#{p['count']} / #{min_quantity}   -  #{type}"
       end
+    end
+
+    def self.get_type(property)
+      property.keys.grep(/\//).first.split('/').first
+    end
+
+    # In progress
+    def self.get_properties(property)
+      map = property.keys.grep(/\//).map{ |v| join(v.split('/').last, property[v], ' => ') }
+      require 'pp'
+      pp map
     end
   end
 end
