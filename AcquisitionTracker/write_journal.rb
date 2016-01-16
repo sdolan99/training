@@ -1,4 +1,5 @@
 module AcquisitionTracker
+  # Write journal to disk
   module WriteJournal
     JOURNAL_PATH = 'journal.yaml'
     def self.user_entry(user_entry)

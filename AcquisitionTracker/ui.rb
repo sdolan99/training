@@ -22,7 +22,7 @@ module AcquisitionTracker
       user_yaml = <<EOY
 # add server
 # -- Parts list
-#{parts_list_string.map { |l| " # - #{l.strip}"}.join("\n")}
+#{parts_list_string.map { |l| " # - #{l.strip}" }.join("\n")}
 
 # Does the Server need any parts not in the above list?
 new_parts:
@@ -51,11 +51,11 @@ EOY
       user_entry, errors = read_user_entry(tmp_path)
       until errors.empty?
         puts errors
-        puts "Press enter to continue correcting errors."
+        puts 'Press enter to continue correcting errors.'
         $stdin.gets
         user_entry, errors = read_user_entry(tmp_path)
       end
-      puts "No errors detected"
+      puts 'No errors detected'
       # TODO: Create a journal entry from user entry
       # TODO: Translate to acquire_server journal entry
       # Need current user, timestamp and the group/unit
@@ -70,7 +70,7 @@ EOY
       user_entry_yaml = File.read(tmp_path)
       user_entry = YAML.load(user_entry_yaml)
       errors = validate_add_server_data(user_entry)
-      return [user_entry, errors]
+      [user_entry, errors]
     end
 
     # TODO: Make better validation
@@ -88,7 +88,7 @@ EOY
 
     def self.strip_namespaces_from_keys(map)
       map.reduce({}) do |ac, (k, v)|
-        ac.merge( k.split('/').last => v )
+        ac.merge(k.split('/').last => v)
       end
     end
 
@@ -99,33 +99,33 @@ EOY
     def self.print_part(attrs, column_width = 20)
       type = get_type(attrs)
       method_name = "print_part_#{type}"
-      raise ArgumentError.new("No renderer for #{type}") unless
+      fail ArgumentError, "No renderer for #{type}" unless
          self.respond_to?(method_name)
-      self.send(method_name, attrs, column_width)
+      send(method_name, attrs, column_width)
     end
 
     def self.print_part_processor(attrs, column_width)
-      line = "processor/#{attrs['id'].slice(0,8)}".ljust(column_width)
+      line = "processor/#{attrs['id'].slice(0, 8)}".ljust(column_width)
       line += attrs['processor/model_number'].ljust(column_width)
       line += "#{attrs['processor/speed']} Ghz #{attrs['processor/wattage']} watts"
     end
 
     def self.print_part_memory(attrs, column_width)
-      line = "memory/#{attrs['id'].slice(0,8)}".ljust(column_width)
+      line = "memory/#{attrs['id'].slice(0, 8)}".ljust(column_width)
       line += attrs['memory/model_number'].ljust(column_width)
-      line += "#{attrs['memory/type']} #{attrs['memory/capacity_gb']} gb"
+      line + "#{attrs['memory/type']} #{attrs['memory/capacity_gb']} gb"
     end
 
     def self.print_part_disk(attrs, column_width)
-      line = "disk/#{attrs['id'].slice(0,8)}".ljust(column_width)
+      line = "disk/#{attrs['id'].slice(0, 8)}".ljust(column_width)
       line += attrs['disk/model_number'].ljust(column_width)
       line += "#{attrs['disk/interface']} #{attrs['disk/capacity_gb']} gb"
-      line += " #{attrs['disk/speed']} rpms"
+      line + " #{attrs['disk/speed']} rpms"
     end
 
     def self.print_part_chassis(attrs, column_width)
-      line = "chassis/#{attrs['id'].slice(0,8)}".ljust(column_width)
-      line += attrs['chassis/model_number'].ljust(column_width)
+      line = "chassis/#{attrs['id'].slice(0, 8)}".ljust(column_width)
+      line + attrs['chassis/model_number'].ljust(column_width)
     end
   end
 end
