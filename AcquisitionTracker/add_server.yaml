@@ -1,0 +1,27 @@
+# add server
+# -- Parts list
+#  part_type/xxxxxxx model specs
+#
+#  processor/3464697f E3-1231         3.4 80
+#  memory/fbce36e0    poweredge13-16  rdimm 16
+#  ...
+
+# Does the Server need any parts not in the above list?
+new_parts:
+  # - processor/temp_id: 1
+  #   processor/model_number: Model-21A 
+  #   processor/speed: 10 
+  #   processor/wattage: 80
+  # - memory/temp_id: 2
+  #   memory/model_number: hpram13-25
+  #   memory/type: dram
+  #   memory/capacity_gb: 34
+
+# What Parts is the Server made from?
+included_parts:
+  # - processor/xxxxxx
+  # - memory/xxxxxxx
+  # ...
+
+# What date was it acquired?
+date_acquired: 12/18/15

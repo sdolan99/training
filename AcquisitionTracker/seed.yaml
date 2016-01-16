@@ -5,6 +5,7 @@ command_name: create_acquirer
 facts:
 - [':assert', ':_mike', 'person/name', 'Mike']
 - [':assert', ':_mike', 'person/join_timestamp', ':_t1']
+- [':assert', ':_mike', 'person/email', 'sdolan@squareup.com']
 
 ---
 # - Learn/Acquire 4 parts
@@ -20,10 +21,11 @@ facts:
 - [':assert', ':_poweredge13_ram', 'memory/type', 'rdimm']
 - [':assert', ':_poweredge13_ram', 'memory/capacity_gb', 16]
 - [':assert', ':_poweredge13_ram', 'memory/model_number', 'poweredge13-16']
+- [':assert', ':_dellSata6', 'disk/model_number', 'dell_s6-500']
 - [':assert', ':_dellSata6', 'disk/capacity_gb', 500]
 - [':assert', ':_dellSata6', 'disk/interface', 'sata']
 - [':assert', ':_dellSata6', 'disk/speed', '7.2']
-- [':assert', ':_poweredge13', 'chassis/model', 'R720']
+- [':assert', ':_poweredge13', 'chassis/model_number', 'R720']
 # Unit Acquisition
 - [':assert', ':_E3-1231_1', 'acquisition/timestamp', ':_t2']
 - [':assert', ':_E3-1231_1', 'acquisition/part_id', ':_E3-1231']

@@ -15,6 +15,11 @@ module AcquisitionTracker
       Ui.inventory_status_report(data)
       exit
     end
+    if args.first == 'add_server'
+      data = Queries.all_parts
+      Ui.add_server(data)
+      exit
+    end
     # if we got here the cli args couldn't be passed, show help
     puts help_msg
   end
@@ -23,7 +28,7 @@ module AcquisitionTracker
     [
       'Available commands:',
       '  inventory_status - report what items need to buying',
-      '  dump_journal - load and print the contents of the journal (for debugging)',
+      '  add_server - record acquisition of new server',
     ].join("\n")
   end
 

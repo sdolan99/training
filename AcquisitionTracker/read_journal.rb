@@ -42,6 +42,7 @@ module AcquisitionTracker
     end
     module_function :substitute_real_fact_uuids!
 
+    # TODO: not working in reverts.  Support translation
     def substitute_uuid!(value_node)
       if value_node.respond_to?(:each)
         value_node.map! do |v|
