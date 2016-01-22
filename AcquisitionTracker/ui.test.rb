@@ -98,4 +98,85 @@ EOS
     actual = AcquisitionTracker::Ui.print_part(given)
     assert_equal expect, actual
   end
+
+  it 'translates add_server new_part user entries of parts to facts' do
+     given_user = [
+       {
+         'processor/temp_id' => 1,
+         'processor/model_number' => 'Model-21A',
+       },
+       {
+         'memory/temp_id' => 2,
+         'memory/model_number' => 'hpram13-25',
+       },
+     ]
+
+    given_parts = [
+      { 'id' => 12345,
+        'processor/model_number' => 'ModelA',
+        'proccessor/speed' => 'fast',
+      },
+      {
+        'id' => 9876,
+        'memory/type' => 'rdimm',
+        'memory/capacity_gb' => 16,
+      },
+    ]
+    expect = [
+        [
+           ':assert',
+           '_processor_1',
+           'processor/model_number',
+           'Model-21A',
+        ],
+        [
+           ':assert',
+           '_memory_2',
+           'memory/model_number',
+           'hpram13-25',
+        ],
+      ]
+    actual = AcquisitionTracker::Ui.translate_user_new_parts_to_facts(given_user)
+    assert_equal expect, actual
+  end
+
+  it 'translates add_server included_part user entries of parts to facts' do
+
+  end
+
+  it 'translates user entry to facts' do
+    given_user = {
+      'new_parts' => [
+        {
+          'processor/temp_id' => 1,
+          'processor/model_number' => 'Model-21A',
+        },
+        {
+          'memory/temp_id' => 2,
+          'memory/model_number' => 'hpram13-25',
+        }
+    ],
+    'included_parts' => [
+      'processor/xxxxxx',
+      'memory/xxxxxxx',
+    ],
+    'date_acquired' => '2016-01-22',
+    }
+
+    given_parts = [
+      { 'id' => 12345,
+        'processor/model_number' => 'ModelA',
+        'proccessor/speed' => 'fast',
+      },
+      {
+        'id' => 9876,
+        'memory/type' => 'rdimm',
+        'memory/capacity_gb' => 16,
+      },
+    ]
+    expect = ''
+
+    actual = AcquisitionTracker::Ui.write_new_add_server_entry(given_user, given_parts)
+    assert_equal expect, actual
+  end
 end

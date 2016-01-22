@@ -1,3 +1,5 @@
+require_relative './read_journal'
+
 module AcquisitionTracker
   # UI functions for printing data
   module Ui
@@ -56,11 +58,51 @@ EOY
         user_entry, errors = read_user_entry(tmp_path)
       end
       puts 'No errors detected'
+      write_new_add_server_entry(user_entry, parts_list)
       # TODO: Create a journal entry from user entry
       # TODO: Translate to acquire_server journal entry
       # Need current user, timestamp and the group/unit
       # journal_entry = create_journal_entry_from_user_entry(user_entry)
       # WriteJournal.user_entry(journal_entry)
+    end
+
+    def self.write_new_add_server_entry(user_entry, parts_list)
+      journal_entry = {
+        'timestamp' => user_entry['date_acquired'],
+        'command_name' => 'acquire_server',
+        'facts' => translate_user_entry_to_facts(user_entry, parts_list),
+      }
+    end
+
+    def self.translate_user_entry_to_facts(user_entry, parts_list)
+      require 'pp'
+      pp user_entry
+      return [] unless user_entry['new_parts'] || user_entry['included_parts']
+      facts = []
+      facts << translate_user_new_parts_to_facts(user_entry['new_parts'])
+    end
+
+    def self.translate_user_new_parts_to_facts(user_new_parts)
+      facts = []
+      user_new_parts.each do |np|
+        type = get_type(np)
+        id = np["#{type}/temp_id"]
+        np.each do |property, value|
+          next if property.include?('temp_id')
+          current_fact = [
+            ':assert',
+            "_#{type}_#{id}",
+            property,
+            value,
+          ]
+          facts << current_fact
+        end
+      end
+      facts
+    end
+
+    def self.write_new_parts_journal(new_parts)
+
     end
 
     def self.read_user_entry(tmp_path)
