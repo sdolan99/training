@@ -111,27 +111,16 @@ EOS
        },
      ]
 
-    given_parts = [
-      { 'id' => 12345,
-        'processor/model_number' => 'ModelA',
-        'proccessor/speed' => 'fast',
-      },
-      {
-        'id' => 9876,
-        'memory/type' => 'rdimm',
-        'memory/capacity_gb' => 16,
-      },
-    ]
     expect = [
         [
            ':assert',
-           '_processor_1',
+           ':_processor_1',
            'processor/model_number',
            'Model-21A',
         ],
         [
            ':assert',
-           '_memory_2',
+           ':_memory_2',
            'memory/model_number',
            'hpram13-25',
         ],
@@ -140,43 +129,66 @@ EOS
     assert_equal expect, actual
   end
 
-  it 'translates add_server included_part user entries of parts to facts' do
-
-  end
-
-  it 'translates user entry to facts' do
-    given_user = {
-      'new_parts' => [
-        {
-          'processor/temp_id' => 1,
-          'processor/model_number' => 'Model-21A',
-        },
-        {
-          'memory/temp_id' => 2,
-          'memory/model_number' => 'hpram13-25',
-        }
-    ],
-    'included_parts' => [
-      'processor/xxxxxx',
-      'memory/xxxxxxx',
-    ],
-    'date_acquired' => '2016-01-22',
+  it 'translates_user_included_parts_to_facts' do
+    given_user_entry = {
+      'included_parts' => [
+        'processor/1eb9ad',
+        'memory/1ce15e4',
+      ],
+      'date_acquired' => '2016-01-22',
     }
 
-    given_parts = [
-      { 'id' => 12345,
+    given_parts_index = [
+      { 'id' => '1eb9ad4dd8de0108eab99017bb7fc587',
         'processor/model_number' => 'ModelA',
         'proccessor/speed' => 'fast',
       },
       {
-        'id' => 9876,
+        'id' => '1ce15e4139a4fac706010cfa077e6520',
         'memory/type' => 'rdimm',
         'memory/capacity_gb' => 16,
       },
     ]
-    expect = ''
+    expect = [
+      [
+        ':assert',
+        ':_acquisition_0_1',
+        'acquisition/timestamp',
+        '2016-01-22',
+      ],
+      [
+        ':assert',
+        ':_acquisition_0_1',
+        ':acquisition/part_id',
+        '1eb9ad4dd8de0108eab99017bb7fc587'
+      ],
+      [
+        ':assert',
+        ':_acquisition_0_1',
+        'acquisition/acquirer',
+        ':_mike'
+      ],
+      [
+        ':assert',
+        ':_acquisition_1_1',
+        'acquisition/timestamp',
+        '2016-01-22'
+      ],
+      [
+        ':assert',
+        ':_acquisition_1_1',
+        ':acquisition/part_id',
+        '1ce15e4139a4fac706010cfa077e6520'
+      ],
+      [
+        ':assert',
+        ':_acquisition_1_1',
+        'acquisition/acquirer',
+        ':_mike'
+      ]
+    ]
 
-    actual = AcquisitionTracker::Ui.write_new_add_server_entry(given_user, given_parts)
+    actual = AcquisitionTracker::Ui.translate_user_included_parts_to_facts(given_user_entry, given_parts_index, 1)
     assert_equal expect, actual
   end
 end

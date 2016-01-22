@@ -6,6 +6,10 @@ module AcquisitionTracker
       indexes['part_entities'].values
     end
 
+    def self.all_parts_ids(indexes = Indexes)
+      indexes['part_entities'].keys
+    end
+
     def self.inventory_status(indexes = Indexes)
       result = TwoLevelHash.new
       # find all the purchased parts

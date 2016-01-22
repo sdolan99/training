@@ -1,4 +1,5 @@
 require_relative './read_journal'
+require_relative './queries'
 
 module AcquisitionTracker
   # UI functions for printing data
@@ -72,14 +73,47 @@ EOY
         'command_name' => 'acquire_server',
         'facts' => translate_user_entry_to_facts(user_entry, parts_list),
       }
+      AcquisitionTracker::ReadJournal.substitute_real_fact_uuids!(journal_entry)
+      journal_entry
     end
 
-    def self.translate_user_entry_to_facts(user_entry, parts_list)
-      require 'pp'
-      pp user_entry
-      return [] unless user_entry['new_parts'] || user_entry['included_parts']
+    def self.translate_user_entry_to_facts(user_entry, parts_list, randv = rand)
       facts = []
-      facts << translate_user_new_parts_to_facts(user_entry['new_parts'])
+      # facts += translate_user_new_parts_to_facts(user_entry['new_parts'])  if user_entry['new_parts']
+      facts += translate_user_included_parts_to_facts(user_entry, parts_list, randv) if user_entry['included_parts']
+      facts
+    end
+
+    def self.translate_user_included_parts_to_facts(user_entry, parts_list, randv = rand)
+      facts = []
+      full_part_ids = parts_list.map { |entity| entity['id'] }
+      user_entry['included_parts'].each.with_index do |ip, index|
+        _, pid = ip.split('/')
+        full_id = full_part_ids.detect { |fid| fid.start_with?(pid) }
+        acq_id = ":_acquisition_#{index}_#{randv}"
+        time_fact = [
+          ':assert',
+          acq_id,
+          'acquisition/timestamp',
+          user_entry['date_acquired'],
+        ]
+        part_id_fact = [
+          ':assert',
+          acq_id,
+          ':acquisition/part_id',
+          full_id,
+        ]
+        acquirer_fact = [
+          ':assert',
+          acq_id,
+          'acquisition/acquirer',
+          ':_mike',  # TODO: hardcoded
+        ]
+        facts << time_fact
+        facts << part_id_fact
+        facts << acquirer_fact
+      end
+      facts
     end
 
     def self.translate_user_new_parts_to_facts(user_new_parts)
@@ -91,7 +125,7 @@ EOY
           next if property.include?('temp_id')
           current_fact = [
             ':assert',
-            "_#{type}_#{id}",
+            ":_#{type}_#{id}",
             property,
             value,
           ]
