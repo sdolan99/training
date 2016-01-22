@@ -1,6 +1,7 @@
 require 'minitest/autorun'
 require 'stringio'
 require_relative 'ui'
+require 'pp'
 
 describe 'UI' do
   it 'Gives inventory status report' do
@@ -99,33 +100,35 @@ EOS
     assert_equal expect, actual
   end
 
-  it 'translates add_server new_part user entries of parts to facts' do
-     given_user = [
-       {
-         'processor/temp_id' => 1,
-         'processor/model_number' => 'Model-21A',
-       },
-       {
-         'memory/temp_id' => 2,
-         'memory/model_number' => 'hpram13-25',
-       },
-     ]
+  it 'translate_user_new_parts_to_facts' do
+     given_user_entry = {
+       'new_parts' => [
+         {
+           'processor/temp_id' => 1,
+           'processor/model_number' => 'Model-21A',
+         },
+         {
+           'memory/temp_id' => 2,
+           'memory/model_number' => 'hpram13-25',
+           'memory/memory_size_gb' => '55',
+         },
+       ],
+       'date_acquired' => '2016-01-22',
+     }
 
     expect = [
-        [
-           ':assert',
-           ':_processor_1',
-           'processor/model_number',
-           'Model-21A',
-        ],
-        [
-           ':assert',
-           ':_memory_2',
-           'memory/model_number',
-           'hpram13-25',
-        ],
-      ]
-    actual = AcquisitionTracker::Ui.translate_user_new_parts_to_facts(given_user)
+      [':assert', ':_processor_1_1', 'processor/model_number', 'Model-21A'],
+      [':assert', ':_acquisition_0_1', 'acquisition/timestamp', '2016-01-22'],
+      [':assert', ':_acquisition_0_1', ':acquisition/part_id', ':_processor_1_1'],
+      [':assert', ':_acquisition_0_1', 'acquisition/acquirer', ':_mike'],
+      [':assert', ':_memory_2_1', 'memory/model_number', 'hpram13-25'],
+      [':assert', ':_memory_2_1', 'memory/memory_size_gb', '55'],
+      [':assert', ':_acquisition_1_1', 'acquisition/timestamp', '2016-01-22'],
+      [':assert', ':_acquisition_1_1', ':acquisition/part_id', ':_memory_2_1'],
+      [':assert', ':_acquisition_1_1', 'acquisition/acquirer', ':_mike']
+    ]
+
+    actual = AcquisitionTracker::Ui.translate_user_new_parts_to_facts(given_user_entry, 1)
     assert_equal expect, actual
   end
 

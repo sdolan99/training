@@ -79,7 +79,7 @@ EOY
 
     def self.translate_user_entry_to_facts(user_entry, parts_list, randv = rand)
       facts = []
-      # facts += translate_user_new_parts_to_facts(user_entry['new_parts'])  if user_entry['new_parts']
+      facts += translate_user_new_parts_to_facts(user_entry, randv)  if user_entry['new_parts']
       facts += translate_user_included_parts_to_facts(user_entry, parts_list, randv) if user_entry['included_parts']
       facts
     end
@@ -116,21 +116,44 @@ EOY
       facts
     end
 
-    def self.translate_user_new_parts_to_facts(user_new_parts)
+    def self.translate_user_new_parts_to_facts(user_entry, randv = rand)
       facts = []
-      user_new_parts.each do |np|
+      user_entry['new_parts'].each.with_index do |np, index|
         type = get_type(np)
         id = np["#{type}/temp_id"]
+        temp_id = ":_#{type}_#{id}_#{randv}"
         np.each do |property, value|
           next if property.include?('temp_id')
           current_fact = [
             ':assert',
-            ":_#{type}_#{id}",
+            temp_id,
             property,
             value,
           ]
           facts << current_fact
         end
+        acq_id = ":_acquisition_#{index}_#{randv}"
+        time_fact = [
+          ':assert',
+          acq_id,
+          'acquisition/timestamp',
+          user_entry['date_acquired'],
+        ]
+        part_id_fact = [
+          ':assert',
+          acq_id,
+          ':acquisition/part_id',
+          temp_id,
+        ]
+        acquirer_fact = [
+          ':assert',
+          acq_id,
+          'acquisition/acquirer',
+          ':_mike',  # TODO: hardcoded
+        ]
+        facts << time_fact
+        facts << part_id_fact
+        facts << acquirer_fact
       end
       facts
     end
