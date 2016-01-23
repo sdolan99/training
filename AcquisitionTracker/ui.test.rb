@@ -125,7 +125,7 @@ EOS
       [':assert', ':_memory_2_1', 'memory/memory_size_gb', '55'],
       [':assert', ':_acquisition_1_1', 'acquisition/timestamp', '2016-01-22'],
       [':assert', ':_acquisition_1_1', ':acquisition/part_id', ':_memory_2_1'],
-      [':assert', ':_acquisition_1_1', 'acquisition/acquirer', ':_mike']
+      [':assert', ':_acquisition_1_1', 'acquisition/acquirer', ':_mike'],
     ]
 
     actual = AcquisitionTracker::Ui.translate_user_new_parts_to_facts(given_user_entry, 1)
@@ -163,31 +163,31 @@ EOS
         ':assert',
         ':_acquisition_0_1',
         ':acquisition/part_id',
-        '1eb9ad4dd8de0108eab99017bb7fc587'
+        '1eb9ad4dd8de0108eab99017bb7fc587',
       ],
       [
         ':assert',
         ':_acquisition_0_1',
         'acquisition/acquirer',
-        ':_mike'
+        ':_mike',
       ],
       [
         ':assert',
         ':_acquisition_1_1',
         'acquisition/timestamp',
-        '2016-01-22'
+        '2016-01-22',
       ],
       [
         ':assert',
         ':_acquisition_1_1',
         ':acquisition/part_id',
-        '1ce15e4139a4fac706010cfa077e6520'
+        '1ce15e4139a4fac706010cfa077e6520',
       ],
       [
         ':assert',
         ':_acquisition_1_1',
         'acquisition/acquirer',
-        ':_mike'
+        ':_mike',
       ]
     ]
 

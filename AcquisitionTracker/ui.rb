@@ -59,28 +59,40 @@ EOY
         user_entry, errors = read_user_entry(tmp_path)
       end
       puts 'No errors detected'
-      write_new_add_server_entry(user_entry, parts_list)
-      # TODO: Create a journal entry from user entry
-      # TODO: Translate to acquire_server journal entry
-      # Need current user, timestamp and the group/unit
-      # journal_entry = create_journal_entry_from_user_entry(user_entry)
-      # WriteJournal.user_entry(journal_entry)
+      add_server_entry = write_new_add_server_entry(user_entry, parts_list)
+      write_journal_entry(add_server_entry, $stdout)
     end
 
     def self.write_new_add_server_entry(user_entry, parts_list)
       journal_entry = {
-        'timestamp' => user_entry['date_acquired'],
+        'timestamp' => Time.now,
         'command_name' => 'acquire_server',
         'facts' => translate_user_entry_to_facts(user_entry, parts_list),
       }
-      AcquisitionTracker::ReadJournal.substitute_real_fact_uuids!(journal_entry)
       journal_entry
+    end
+
+    def self.write_journal_entry(journal_entry, write_stream)
+      AcquisitionTracker::ReadJournal.substitute_real_fact_uuids!(journal_entry)
+      write_stream.puts(YAML.dump(journal_entry))
     end
 
     def self.translate_user_entry_to_facts(user_entry, parts_list, randv = rand)
       facts = []
       facts += translate_user_new_parts_to_facts(user_entry, randv)  if user_entry['new_parts']
       facts += translate_user_included_parts_to_facts(user_entry, parts_list, randv) if user_entry['included_parts']
+      part_ids = facts.select { |fact|
+        fact[2] == 'acquisition/part_id'
+      }.map { |fact|
+        fact[3]
+      }.uniq
+      group_fact = [
+        ':assert',
+        ":_server_#{randv}",
+        'group/units',
+        part_ids,
+      ]
+      facts << group_fact
       facts
     end
 
@@ -100,7 +112,7 @@ EOY
         part_id_fact = [
           ':assert',
           acq_id,
-          ':acquisition/part_id',
+          'acquisition/part_id',
           full_id,
         ]
         acquirer_fact = [
@@ -142,7 +154,7 @@ EOY
         part_id_fact = [
           ':assert',
           acq_id,
-          ':acquisition/part_id',
+          'acquisition/part_id',
           temp_id,
         ]
         acquirer_fact = [
