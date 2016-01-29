@@ -119,12 +119,12 @@ EOS
     expect = [
       [':assert', ':_processor_1_1', 'processor/model_number', 'Model-21A'],
       [':assert', ':_acquisition_0_1', 'acquisition/timestamp', '2016-01-22'],
-      [':assert', ':_acquisition_0_1', ':acquisition/part_id', ':_processor_1_1'],
+      [':assert', ':_acquisition_0_1', 'acquisition/part_id', ':_processor_1_1'],
       [':assert', ':_acquisition_0_1', 'acquisition/acquirer', ':_mike'],
       [':assert', ':_memory_2_1', 'memory/model_number', 'hpram13-25'],
       [':assert', ':_memory_2_1', 'memory/memory_size_gb', '55'],
       [':assert', ':_acquisition_1_1', 'acquisition/timestamp', '2016-01-22'],
-      [':assert', ':_acquisition_1_1', ':acquisition/part_id', ':_memory_2_1'],
+      [':assert', ':_acquisition_1_1', 'acquisition/part_id', ':_memory_2_1'],
       [':assert', ':_acquisition_1_1', 'acquisition/acquirer', ':_mike'],
     ]
 
@@ -162,7 +162,7 @@ EOS
       [
         ':assert',
         ':_acquisition_0_1',
-        ':acquisition/part_id',
+        'acquisition/part_id',
         '1eb9ad4dd8de0108eab99017bb7fc587',
       ],
       [
@@ -180,7 +180,7 @@ EOS
       [
         ':assert',
         ':_acquisition_1_1',
-        ':acquisition/part_id',
+        'acquisition/part_id',
         '1ce15e4139a4fac706010cfa077e6520',
       ],
       [

@@ -5,10 +5,13 @@ require_relative 'ui'
 
 # Application Namespace
 module AcquisitionTracker
-  SEED_PATH = 'seed.yaml'
+  SEED_JOURNAL = 'seed.yaml'
+  DATA_DIR = "#{ENV['HOME']}/.AcquisitionTracker"
+  PROD_JOURNAL = File.join(DATA_DIR, 'journal.yaml')
+  DEV_JOURNAL = File.join(DATA_DIR, 'dev_journal.yaml')
   # cli entry point
-  def self.run(args, journal_path = SEED_PATH)
-    hydrate load_journal_entries journal_path
+  def self.run(args)
+    hydrate load_journal_entries
     # handle inventory_status report
     if args.first == 'inventory_status'
       data = Queries.inventory_status_report
@@ -32,14 +35,34 @@ module AcquisitionTracker
     ].join("\n")
   end
 
-  def self.load_journal_entries(journal_path = SEED_PATH)
-    journal_text = File.read(journal_path)
-    journal_entries = YAML.load_stream(journal_text)
-    # seeds (but only seeds) must be transformed before use
-    if journal_path == SEED_PATH
+  def self.load_journal_entries(devmode = ENV.key?('AT_DEV'))
+    ensure_access
+    if devmode
+      journal_text = File.read(SEED_JOURNAL)
+      journal_entries = YAML.load_stream(journal_text)
       journal_entries = ReadJournal.transform_seed_entries(journal_entries)
+      dev_entries = []
+      if File.exist?(DEV_JOURNAL)
+        dev_journal_text = File.read(DEV_JOURNAL)
+        dev_entries = YAML.load_stream(dev_journal_text)
+      end
+      return journal_entries + dev_entries
+    else
+      unless File.exist?(PROD_JOURNAL)
+        File.write(PROD_JOURNAL, '')
+        return []
+      end
+      journal_text = File.read(PROD_JOURNAL)
+      journal_entries = YAML.load_stream(journal_text)
+      return journal_entries
     end
-    journal_entries
+  end
+
+  # Ensure journal is writable
+  # Expected to crash if it cannot write a directory (no write privileges)
+  def self.ensure_access(directory = DATA_DIR)
+    Dir.mkdir(directory) unless File.directory?(directory)
+    fail IOError, "#{directory} is not writable" unless File.writable?(directory)
   end
 
   # loads the journal into the indexes

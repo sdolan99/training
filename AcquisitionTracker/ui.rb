@@ -1,5 +1,6 @@
 require_relative './read_journal'
 require_relative './queries'
+require_relative './write_journal'
 
 module AcquisitionTracker
   # UI functions for printing data
@@ -51,7 +52,8 @@ EOY
       tmp_filename = 'ac-addserver.yaml'
       tmp_path = File.join(tmp_dir, tmp_filename)
       File.write(tmp_path, user_yaml)
-      user_entry, errors = read_user_entry(tmp_path)
+      errors, user_entry = read_user_entry(tmp_path)
+      user_entry.nil?
       until errors.empty?
         puts errors
         puts 'Press enter to continue correcting errors.'
@@ -60,7 +62,7 @@ EOY
       end
       puts 'No errors detected'
       add_server_entry = write_new_add_server_entry(user_entry, parts_list)
-      write_journal_entry(add_server_entry, $stdout)
+      JournalWriter.entry(add_server_entry)
     end
 
     def self.write_new_add_server_entry(user_entry, parts_list)
@@ -72,20 +74,14 @@ EOY
       journal_entry
     end
 
-    def self.write_journal_entry(journal_entry, write_stream)
-      AcquisitionTracker::ReadJournal.substitute_real_fact_uuids!(journal_entry)
-      write_stream.puts(YAML.dump(journal_entry))
-    end
-
     def self.translate_user_entry_to_facts(user_entry, parts_list, randv = rand)
       facts = []
-      facts += translate_user_new_parts_to_facts(user_entry, randv)  if user_entry['new_parts']
+      facts += translate_user_new_parts_to_facts(user_entry, randv) if user_entry['new_parts']
       facts += translate_user_included_parts_to_facts(user_entry, parts_list, randv) if user_entry['included_parts']
-      part_ids = facts.select { |fact|
-        fact[2] == 'acquisition/part_id'
-      }.map { |fact|
-        fact[3]
-      }.uniq
+      part_ids = facts
+                 .select { |fact| fact[2] == 'acquisition/part_id' }
+                 .map { |fact| fact[3] }
+                 .uniq
       group_fact = [
         ':assert',
         ":_server_#{randv}",
@@ -170,10 +166,6 @@ EOY
       facts
     end
 
-    def self.write_new_parts_journal(new_parts)
-
-    end
-
     def self.read_user_entry(tmp_path)
       editor = ENV['EDITOR'] || 'vi'
       open_editor_command = "#{editor} #{tmp_path}"
@@ -181,7 +173,7 @@ EOY
       user_entry_yaml = File.read(tmp_path)
       user_entry = YAML.load(user_entry_yaml)
       errors = validate_add_server_data(user_entry)
-      [user_entry, errors]
+      [errors, user_entry]
     end
 
     # TODO: Make better validation
@@ -218,7 +210,7 @@ EOY
     def self.print_part_processor(attrs, column_width)
       line = "processor/#{attrs['id'].slice(0, 8)}".ljust(column_width)
       line += attrs['processor/model_number'].ljust(column_width)
-      line += "#{attrs['processor/speed']} Ghz #{attrs['processor/wattage']} watts"
+      line + "#{attrs['processor/speed']} Ghz #{attrs['processor/wattage']} watts"
     end
 
     def self.print_part_memory(attrs, column_width)

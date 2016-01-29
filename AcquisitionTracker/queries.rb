@@ -20,7 +20,7 @@ module AcquisitionTracker
         result[properties['acquisition/part_id']]['properties'] =
           indexes['entities'][properties['acquisition/part_id']]
       end
-      indexes
+      result
     end
 
     MIN_QUANTITY = 3
