@@ -67,3 +67,14 @@ facts:
 - [':assert', ':_repair1', 'repair/timestamp', ':_t5']
 - [':revert', '_poweredge13_ram_1']
 - [':assert', ':_server1', 'group/units', [':_E3-1231_1', ':_poweredge13_ram_2', ':_dellSata6_1', ':_poweredge13_1']]
+
+---
+timestamp: ':_t6'
+command_name: acquire_part
+facts:
+- ['assert', ':_processor2', 'processor/model_number', 'T2']
+- ['assert', ':_processor2', 'processor/speed', '10']
+- ['assert', ':_processor2', 'processor/wattage', '500']
+- ['assert', ':_processor2_1', 'acquisition/timestamp', ':_t6']
+- ['assert', ':_processor2_1', 'acquisition/part_id', '_processor2']
+- ['assert', ':_processor2_1', 'acquisition/acquirer', ':_mike']
