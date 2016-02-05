@@ -74,6 +74,17 @@ EOY
       journal_entry
     end
 
+    def self.translate_part_entry_to_facts(user_entry, parts_list, randv = rand)
+      facts = []
+      if user_entry.key?('new_part')
+        facts += translate_user_new_parts_to_facts(user_entry, randv)
+      else
+        facts += translate_acquire_part_to_facts(user_entry, parts_list, randv)
+      end
+      facts
+    end
+
+
     def self.translate_user_entry_to_facts(user_entry, parts_list, randv = rand)
       facts = []
       facts += translate_user_new_parts_to_facts(user_entry, randv) if user_entry['new_parts']
@@ -97,72 +108,84 @@ EOY
       full_part_ids = parts_list.map { |entity| entity['id'] }
       user_entry['included_parts'].each.with_index do |ip, index|
         _, pid = ip.split('/')
-        full_id = full_part_ids.detect { |fid| fid.start_with?(pid) }
-        acq_id = ":_acquisition_#{index}_#{randv}"
-        time_fact = [
-          ':assert',
-          acq_id,
-          'acquisition/timestamp',
-          user_entry['date_acquired'],
-        ]
-        part_id_fact = [
-          ':assert',
-          acq_id,
-          'acquisition/part_id',
-          full_id,
-        ]
-        acquirer_fact = [
-          ':assert',
-          acq_id,
-          'acquisition/acquirer',
-          ':_mike',  # TODO: hardcoded
-        ]
-        facts << time_fact
-        facts << part_id_fact
-        facts << acquirer_fact
+        facts += translate_part_id_to_fact(user_entry, pid, parts_list, full_part_ids, index, randv)
       end
+      facts
+    end
+
+    def self.translate_part_id_to_fact(user_entry, part_id, parts_list, full_part_ids, indexv = rand, randv = rand)
+      facts = []
+      full_id = full_part_ids.detect { |fid| fid.start_with?(part_id) }
+      acq_id = ":_acquisition_#{indexv}_#{randv}"
+      time_fact = [
+        ':assert',
+        acq_id,
+        'acquisition/timestamp',
+        user_entry['date_acquired'],
+      ]
+      part_id_fact = [
+        ':assert',
+        acq_id,
+        'acquisition/part_id',
+        full_id,
+      ]
+      acquirer_fact = [
+        ':assert',
+        acq_id,
+        'acquisition/acquirer',
+        ':_mike',  # TODO: hardcoded
+      ]
+      facts << time_fact
+      facts << part_id_fact
+      facts << acquirer_fact
       facts
     end
 
     def self.translate_user_new_parts_to_facts(user_entry, randv = rand)
       facts = []
       user_entry['new_parts'].each.with_index do |np, index|
-        type = get_type(np)
-        id = np["#{type}/temp_id"]
-        temp_id = ":_#{type}_#{id}_#{randv}"
-        np.each do |property, value|
-          next if property.include?('temp_id')
-          current_fact = [
+        facts += translate_acquire_part_to_fact(np, user_entry['date_acquired'], index, randv)
+      end
+      facts
+    end
+
+    def self.translate_acquire_part_to_fact(new_part, date_acquired, indexv = randv, randv = rand)
+      facts = []
+      type = get_type(new_part)
+      id = new_part["#{type}/temp_id"]
+      temp_id = ":_#{type}_#{id}_#{randv}"
+      new_part.each do |property, value|
+        next if property.include?('temp_id')
+        current_fact = [
             ':assert',
             temp_id,
             property,
             value,
-          ]
-          facts << current_fact
-        end
-        acq_id = ":_acquisition_#{index}_#{randv}"
-        time_fact = [
+        ]
+        facts << current_fact
+      end
+      acq_id = ":_acquisition_#{indexv}_#{randv}"
+      time_fact = [
           ':assert',
           acq_id,
           'acquisition/timestamp',
-          user_entry['date_acquired'],
-        ]
-        part_id_fact = [
+          date_acquired,
+      ]
+      part_id_fact = [
           ':assert',
           acq_id,
           'acquisition/part_id',
           temp_id,
-        ]
-        acquirer_fact = [
+      ]
+      acquirer_fact = [
           ':assert',
           acq_id,
           'acquisition/acquirer',
           ':_mike',  # TODO: hardcoded
-        ]
-        facts << time_fact
-        facts << part_id_fact
-        facts << acquirer_fact
-      end
+      ]
+      facts << time_fact
+      facts << part_id_fact
+      facts << acquirer_fact
       facts
     end
 
