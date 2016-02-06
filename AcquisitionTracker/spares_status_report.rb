@@ -26,7 +26,7 @@ module Reporting
     end
   end
 
-  def self.inventory(journal_entries)
+  def self.inventory(journal_entries) # rubocop:disable Metrics/AbcSize
     parts = {}
     journal_entries.each do |entry|
       entry['facts'].each do |fact|

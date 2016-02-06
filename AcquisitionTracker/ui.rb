@@ -4,7 +4,7 @@ require_relative './write_journal'
 
 module AcquisitionTracker
   # UI functions for printing data
-  module Ui
+  module Ui # rubocop:disable Metrics/MethodLengthm
     def self.inventory_status_report(data, outstream = $stdout)
       min_quantity = data['min_quantity']
       outstream.puts 'Inventory Status Report'
@@ -19,7 +19,7 @@ module AcquisitionTracker
       end
     end
 
-    def self.add_server(parts_list)
+    def self.add_server(parts_list) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
       # Generate yaml in temp file to open in users text edit
       # Returns, read context of file and parse/perform command
       parts_list_string = parts_list(parts_list)
@@ -65,6 +65,78 @@ EOY
       JournalWriter.entry(add_server_entry)
     end
 
+    def self.add_part(parts_list, outstream = $stdout)
+      # Generate yaml in temp file to open in users text edit
+      # Returns, read context of file and parse/perform command
+      parts_list_string = parts_list(parts_list)
+      user_yaml = <<EOY
+# add part
+
+# either select id of existing part
+
+existing_part_id:
+#{parts_list_string.map { |l| " # - #{l.strip}" }.join("\n")}
+
+# or, introduce a new part and record its aquisition:
+
+# part attrs:
+#
+#   processor/temp_id (int)
+#   processor/model_number (str)
+#   processor/speed
+#   processor/wattage
+#
+#   memory/temp_id
+#   memory/model_number
+#   memory/type: dram
+#   memory/capacity_gb
+
+# e.g. ucomment these lines to add a processor
+# new_part:
+#   processor/model_number: ...
+#   processor/speed: ...
+#   processor/wattage: ...
+
+# What date was it acquired?
+date_acquired: #{Time.now.to_s.split(' ').first}
+EOY
+      tmp_dir = ENV['TMPDIR'] || '/tmp'
+      tmp_filename = 'ac-addpart.yaml'
+      tmp_path = File.join(tmp_dir, tmp_filename)
+      File.write(tmp_path, user_yaml)
+      errors, user_entry = read_user_add_part_entry(tmp_path)
+      user_entry.nil?
+      until errors.empty?
+        puts errors
+        puts 'Press enter to continue correcting errors.'
+        $stdin.gets
+        user_entry, errors = read_user_add_part_entry(tmp_path)
+      end
+      puts 'No errors detected'
+      add_part_entry = write_new_add_part_entry(user_entry, parts_list)
+      JournalWriter.entry(add_part_entry)
+    end
+
+    def self.write_new_add_part_entry(user_entry, parts_list)
+      journal_entry = {
+          'timestamp' => Time.now,
+          'command_name' => 'acquire_part',
+          'facts' => translate_part_entry_to_facts(user_entry, parts_list)
+      }
+=begin
+      ---
+      timestamp: ':_t6'
+      command_name: acquire_part
+      facts:
+          - ['assert', ':_processor2', 'processor/model_number', 'T2']
+      - ['assert', ':_processor2', 'processor/speed', '10']
+      - ['assert', ':_processor2', 'processor/wattage', '500']
+      - ['assert', ':_processor2_1', 'acquisition/timestamp', ':_t6']
+      - ['assert', ':_processor2_1', 'acquisition/part_id', '_processor2']
+      - ['assert', ':_processor2_1', 'acquisition/acquirer', ':_mike']
+=end
+    end
+
     def self.write_new_add_server_entry(user_entry, parts_list)
       journal_entry = {
         'timestamp' => Time.now,
@@ -76,14 +148,21 @@ EOY
 
     def self.translate_part_entry_to_facts(user_entry, parts_list, randv = rand)
       facts = []
-      if user_entry.key?('new_part')
-        facts += translate_user_new_parts_to_facts(user_entry, randv)
+      unless user_entry.key?('new_part').nil?
+        facts += translate_acquire_part_to_fact(user_entry, randv)
       else
-        facts += translate_acquire_part_to_facts(user_entry, parts_list, randv)
+        facts += existing_part_user_entry_to_fact(user_entry, parts_list)
       end
       facts
     end
 
+    def self.existing_part_user_entry_to_fact(user_entry, parts_list, randv = rand)
+      facts = []
+      full_part_ids = parts_list.map { |entity| entity['id'] }
+      full_id = full_part_ids.detect { |fid| fid.start_with?(user_entry['existing_part_id']) }
+      facts += translate_part_id_to_fact(user_entry, full_id, index, randv)
+      facts
+    end
 
     def self.translate_user_entry_to_facts(user_entry, parts_list, randv = rand)
       facts = []
@@ -108,14 +187,14 @@ EOY
       full_part_ids = parts_list.map { |entity| entity['id'] }
       user_entry['included_parts'].each.with_index do |ip, index|
         _, pid = ip.split('/')
-        facts += translate_part_id_to_fact(user_entry, pid, parts_list, full_part_ids, index, randv)
+        full_id = full_part_ids.detect { |fid| fid.start_with?(pid) }
+        facts += translate_part_id_to_fact(user_entry, full_id, index, randv)
       end
       facts
     end
 
-    def self.translate_part_id_to_fact(user_entry, part_id, parts_list, full_part_ids, indexv = rand, randv = rand)
+    def self.translate_part_id_to_fact(user_entry, full_id, indexv = rand, randv = rand)
       facts = []
-      full_id = full_part_ids.detect { |fid| fid.start_with?(part_id) }
       acq_id = ":_acquisition_#{indexv}_#{randv}"
       time_fact = [
         ':assert',
@@ -149,7 +228,7 @@ EOY
       facts
     end
 
-    def self.translate_acquire_part_to_fact(new_part, date_acquired, indexv = randv, randv = rand)
+    def self.translate_acquire_part_to_fact(new_part, date_acquired, indexv = rand, randv = rand)
       facts = []
       type = get_type(new_part)
       id = new_part["#{type}/temp_id"]
@@ -199,11 +278,33 @@ EOY
       [errors, user_entry]
     end
 
+    def self.read_user_add_part_entry(tmp_path)
+      editor = ENV['EDITOR'] || 'vi'
+      open_editor_command = "#{editor} #{tmp_path}"
+      system(open_editor_command)
+      user_entry_yaml = File.read(tmp_path)
+      user_entry = YAML.load(user_entry_yaml)
+      errors = validate_add_part_user_data(user_entry)
+      [errors, user_entry]
+    end
+
     # TODO: Make better validation
     def self.validate_add_server_data(server_data)
       errors = []
       if server_data['new_parts'].nil? && server_data['included_parts'].nil?
         errors << ['Server must have parts']
+      end
+      errors
+    end
+
+    def self.validate_add_part_user_data(part_data)
+      errors = []
+      if part_data['existing_part_id'].nil? && part_data['new_part'].nil?
+        errors << ['New or existing part must be chosen']
+      end
+
+      if !part_data['existing_part_id'].nil? && !part_data['new_part'].nil?
+        errors << ['Only a new or existing part must be chosen, not both']
       end
       errors
     end

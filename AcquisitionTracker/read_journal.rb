@@ -43,7 +43,7 @@ module AcquisitionTracker
     module_function :substitute_real_fact_uuids!
 
     # TODO: not working in reverts.  Support translation
-    def substitute_uuid!(value_node)
+    def substitute_uuid!(value_node) # rubocop:disable Metrics/MethodLength
       if value_node.respond_to?(:each)
         value_node.map! do |v|
           substitute_uuid!(v)

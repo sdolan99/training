@@ -10,7 +10,7 @@ module AcquisitionTracker
       indexes['part_entities'].keys
     end
 
-    def self.inventory_status(indexes = Indexes)
+    def self.inventory_status(indexes = Indexes) # rubocop:disable Metrics/AbcSize
       result = TwoLevelHash.new
       # find all the purchased parts
       indexes['acquisition_entities'].each do |_, properties|

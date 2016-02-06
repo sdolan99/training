@@ -1,0 +1,163 @@
+---
+timestamp: 2016-01-29 14:15:33.853230000 -08:00
+command_name: acquire_server
+facts:
+- - ":assert"
+  - 70efdf5af5ee0f2c55102e98b76262e1
+  - processor/model_number
+  - Model-21A
+- - ":assert"
+  - 7fbda32c33c24308faa8c26499fa1919
+  - acquisition/timestamp
+  - 2016-01-29
+- - ":assert"
+  - 7fbda32c33c24308faa8c26499fa1919
+  - acquisition/part_id
+  - 70efdf5af5ee0f2c55102e98b76262e1
+- - ":assert"
+  - 7fbda32c33c24308faa8c26499fa1919
+  - acquisition/acquirer
+  - afba69ea8fd784d2ed85080dd3adc127
+- - ":assert"
+  - 6c1feeb66cbbb3dfec00b3953e1dc097
+  - memory/model_number
+  - hpram13-25
+- - ":assert"
+  - c90d64f8002cbb8b6e6acf8d9080eea6
+  - acquisition/timestamp
+  - 2016-01-29
+- - ":assert"
+  - c90d64f8002cbb8b6e6acf8d9080eea6
+  - acquisition/part_id
+  - 6c1feeb66cbbb3dfec00b3953e1dc097
+- - ":assert"
+  - c90d64f8002cbb8b6e6acf8d9080eea6
+  - acquisition/acquirer
+  - afba69ea8fd784d2ed85080dd3adc127
+- - ":assert"
+  - 200bd7c01c48adc0125aa38337197220
+  - group/units
+  - - 70efdf5af5ee0f2c55102e98b76262e1
+    - 6c1feeb66cbbb3dfec00b3953e1dc097
+---
+timestamp: 2016-01-29 14:19:25.242662000 -08:00
+command_name: acquire_server
+facts:
+- - ":assert"
+  - 09df9d88e3df2f8dc1bde1d2a3c1f57a
+  - processor/model_number
+  - Model-Superfast
+- - ":assert"
+  - 09df9d88e3df2f8dc1bde1d2a3c1f57a
+  - processor/speed
+  - 10
+- - ":assert"
+  - 09df9d88e3df2f8dc1bde1d2a3c1f57a
+  - processor/wattage
+  - 80
+- - ":assert"
+  - 119a1d6cc56f0b5709fd62f7e9889e54
+  - acquisition/timestamp
+  - 2016-01-29
+- - ":assert"
+  - 119a1d6cc56f0b5709fd62f7e9889e54
+  - acquisition/part_id
+  - 09df9d88e3df2f8dc1bde1d2a3c1f57a
+- - ":assert"
+  - 119a1d6cc56f0b5709fd62f7e9889e54
+  - acquisition/acquirer
+  - afba69ea8fd784d2ed85080dd3adc127
+- - ":assert"
+  - 1e7033de12a0657f0bd2f0bcea89f0f1
+  - memory/model_number
+  - superbig
+- - ":assert"
+  - d8e3363cb2cb0cb505286dbf1bc00036
+  - acquisition/timestamp
+  - 2016-01-29
+- - ":assert"
+  - d8e3363cb2cb0cb505286dbf1bc00036
+  - acquisition/part_id
+  - 1e7033de12a0657f0bd2f0bcea89f0f1
+- - ":assert"
+  - d8e3363cb2cb0cb505286dbf1bc00036
+  - acquisition/acquirer
+  - afba69ea8fd784d2ed85080dd3adc127
+- - ":assert"
+  - 80e37ee44d4eaee5d7a986bc807945ab
+  - group/units
+  - - 09df9d88e3df2f8dc1bde1d2a3c1f57a
+    - 1e7033de12a0657f0bd2f0bcea89f0f1
+---
+timestamp: 2016-01-29 14:55:32.572033000 -08:00
+command_name: acquire_server
+facts:
+- - ":assert"
+  - 614856baa29a617ea379d964eaed7bb3
+  - processor/model_number
+  - Model-21A
+- - ":assert"
+  - 21c9274407757e2fd371462e91c212cf
+  - acquisition/timestamp
+  - 2016-01-29
+- - ":assert"
+  - 21c9274407757e2fd371462e91c212cf
+  - acquisition/part_id
+  - 614856baa29a617ea379d964eaed7bb3
+- - ":assert"
+  - 21c9274407757e2fd371462e91c212cf
+  - acquisition/acquirer
+  - afba69ea8fd784d2ed85080dd3adc127
+- - ":assert"
+  - 714ca0e748d07b47d47e3c47ded06698
+  - memory/model_number
+  - hpram13-25
+- - ":assert"
+  - 44f4d36d38f60767ce8bfed437df4108
+  - acquisition/timestamp
+  - 2016-01-29
+- - ":assert"
+  - 44f4d36d38f60767ce8bfed437df4108
+  - acquisition/part_id
+  - 714ca0e748d07b47d47e3c47ded06698
+- - ":assert"
+  - 44f4d36d38f60767ce8bfed437df4108
+  - acquisition/acquirer
+  - afba69ea8fd784d2ed85080dd3adc127
+- - ":assert"
+  - 301dbf35cf4d753aec467d9d81138a8f
+  - group/units
+  - - 614856baa29a617ea379d964eaed7bb3
+    - 714ca0e748d07b47d47e3c47ded06698
+---
+timestamp: 2016-01-29 15:07:17.484324000 -08:00
+command_name: acquire_server
+facts:
+- - ":assert"
+  - 0f7b3303a39b94aa1f8cd20dbc3997ca
+  - processor/model_number
+  - Model-21A
+- - ":assert"
+  - 0f7b3303a39b94aa1f8cd20dbc3997ca
+  - processor/speed
+  - 10
+- - ":assert"
+  - 0f7b3303a39b94aa1f8cd20dbc3997ca
+  - processor/wattage
+  - 80
+- - ":assert"
+  - 126b733f73f8bd8ff1bb3ffa357322df
+  - acquisition/timestamp
+  - 2016-01-29
+- - ":assert"
+  - 126b733f73f8bd8ff1bb3ffa357322df
+  - acquisition/part_id
+  - 0f7b3303a39b94aa1f8cd20dbc3997ca
+- - ":assert"
+  - 126b733f73f8bd8ff1bb3ffa357322df
+  - acquisition/acquirer
+  - afba69ea8fd784d2ed85080dd3adc127
+- - ":assert"
+  - 17a2c440594575ad9af22c9b4a9e41ee
+  - group/units
+  - - 0f7b3303a39b94aa1f8cd20dbc3997ca

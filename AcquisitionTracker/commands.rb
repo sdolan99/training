@@ -4,7 +4,7 @@ require_relative 'indexes'
 module AcquisitionTracker
   # Methods that mutate the application's data
   module Commands
-    def self.index_create_acquirer(facts, indexes = Indexes)
+    def self.index_create_acquirer(facts, indexes = Indexes) # rubocop:disable Metrics/AbcSize
       # this command asserts attributes about a *new* acquirer
       acquirer_ids = []
       facts.each do |(_operation, id, property, value)|
@@ -20,7 +20,7 @@ module AcquisitionTracker
     end
     # module_function :index_create_acquirer
 
-    def self.index_acquire_server(facts, indexes = Indexes)
+    def self.index_acquire_server(facts, indexes = Indexes) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
       # 2. add acquisition entities to indexes[:acquisition_entities]
       # 2. add group entities to indexes[:acquisition_entities]
       part_ids = []
@@ -44,7 +44,7 @@ module AcquisitionTracker
       end
     end
 
-    def self.index_deploy_server(facts, indexes = Indexes)
+    def self.index_deploy_server(facts, indexes = Indexes) # rubocop:disable Metrics/AbcSize
       deployment_ids = []
       facts.each do |(_operation, id, property, value)|
         indexes['entities'][id] ||= {}
@@ -58,7 +58,7 @@ module AcquisitionTracker
       end
     end
 
-    def self.index_acquire_part(facts, indexes = Indexes)
+    def self.index_acquire_part(facts, indexes = Indexes) # rubocop:disable Metrics/AbcSize
       acquisition_ids = []
       facts.each do |(_operation, id, property, value)|
         indexes['entities'][id] ||= {}
@@ -72,7 +72,7 @@ module AcquisitionTracker
       end
     end
 
-    def self.index_repair_deployed_server(facts, indexes = Indexes)
+    def self.index_repair_deployed_server(facts, indexes = Indexes) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
       repair_ids = []
       asserts(facts).each do |(_operation, id, property, value)|
         indexes['entities'][id] ||= {}

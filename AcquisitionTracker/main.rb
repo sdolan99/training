@@ -10,7 +10,7 @@ module AcquisitionTracker
   PROD_JOURNAL = File.join(DATA_DIR, 'journal.yaml')
   DEV_JOURNAL = File.join(DATA_DIR, 'dev_journal.yaml')
   # cli entry point
-  def self.run(args)
+  def self.run(args) # rubocop:disable Metrics/MethodLength
     hydrate load_journal_entries
     # handle inventory_status report
     if args.first == 'inventory_status'
@@ -23,6 +23,12 @@ module AcquisitionTracker
       Ui.add_server(data)
       exit
     end
+
+    if args.first == 'add_part'
+      data = Queries.all_parts
+      Ui.add_part(data)
+      exit
+    end
     # if we got here the cli args couldn't be passed, show help
     puts help_msg
   end
@@ -32,10 +38,11 @@ module AcquisitionTracker
       'Available commands:',
       '  inventory_status - report what items need to buying',
       '  add_server - record acquisition of new server',
+      '  add_part   - (not functional) Add New Part',
     ].join("\n")
   end
 
-  def self.load_journal_entries(devmode = ENV.key?('AT_DEV'))
+  def self.load_journal_entries(devmode = ENV.key?('AT_DEV')) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
     ensure_access
     if devmode
       journal_text = File.read(SEED_JOURNAL)
