@@ -32,7 +32,7 @@ module AcquisitionTracker
     end
 
     def self.inventory_report(indexes = Indexes)
-      data = inventory_status(indexes)
+      inventory_status(indexes)
     end
   end
 end
