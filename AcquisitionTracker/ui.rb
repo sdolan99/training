@@ -148,25 +148,26 @@ EOY
 
     def self.translate_part_entry_to_facts(user_entry, parts_list, randv = rand)
       facts = []
-      unless user_entry.key?('new_part').nil?
-        facts += translate_acquire_part_to_fact(user_entry, randv)
+
+      if user_entry.key?('new_part')
+        facts += new_part_fact(user_entry, randv)
       else
         facts += existing_part_user_entry_to_fact(user_entry, parts_list)
       end
       facts
     end
 
-    def self.existing_part_user_entry_to_fact(user_entry, parts_list, randv = rand)
+    def self.existing_part_user_entry_to_fact(user_entry, parts_list, index = 1, randv = rand)
       facts = []
       full_part_ids = parts_list.map { |entity| entity['id'] }
       full_id = full_part_ids.detect { |fid| fid.start_with?(user_entry['existing_part_id']) }
-      facts += translate_part_id_to_fact(user_entry, full_id, index, randv)
+      facts += part_id_to_fact(user_entry, full_id, index, randv, user_entry['date_acquired'])
       facts
     end
 
     def self.translate_user_entry_to_facts(user_entry, parts_list, randv = rand)
       facts = []
-      facts += translate_user_new_parts_to_facts(user_entry, randv) if user_entry['new_parts']
+      facts += user_new_parts_to_facts(user_entry, randv) if user_entry['new_parts']
       facts += translate_user_included_parts_to_facts(user_entry, parts_list, randv) if user_entry['included_parts']
       part_ids = facts
                  .select { |fact| fact[2] == 'acquisition/part_id' }
@@ -188,19 +189,19 @@ EOY
       user_entry['included_parts'].each.with_index do |ip, index|
         _, pid = ip.split('/')
         full_id = full_part_ids.detect { |fid| fid.start_with?(pid) }
-        facts += translate_part_id_to_fact(user_entry, full_id, index, randv)
+        facts += part_id_to_fact(user_entry, full_id, index, randv)
       end
       facts
     end
 
-    def self.translate_part_id_to_fact(user_entry, full_id, indexv = rand, randv = rand)
+    def self.part_id_to_fact(user_entry, full_id, indexv = rand, randv = rand, date_acquired = nil)
       facts = []
       acq_id = ":_acquisition_#{indexv}_#{randv}"
       time_fact = [
         ':assert',
         acq_id,
         'acquisition/timestamp',
-        user_entry['date_acquired'],
+        user_entry['date_acquired'] || date_acquired,
       ]
       part_id_fact = [
         ':assert',
@@ -220,15 +221,16 @@ EOY
       facts
     end
 
-    def self.translate_user_new_parts_to_facts(user_entry, randv = rand)
+    def self.user_new_parts_to_facts(user_entry, randv = rand)
       facts = []
       user_entry['new_parts'].each.with_index do |np, index|
-        facts += translate_acquire_part_to_fact(np, user_entry['date_acquired'], index, randv)
+        facts += new_part_fact(np, user_entry['date_acquired'], index, randv)
       end
       facts
     end
 
-    def self.translate_acquire_part_to_fact(new_part, date_acquired, indexv = rand, randv = rand)
+    #
+    def self.new_part_fact(new_part, date_acquired, indexv = rand, randv = rand)
       facts = []
       type = get_type(new_part)
       id = new_part["#{type}/temp_id"]

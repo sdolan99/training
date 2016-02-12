@@ -100,7 +100,7 @@ EOS
     assert_equal expect, actual
   end
 
-  it 'translate_user_new_parts_to_facts' do
+  it 'user_new_parts_to_facts' do
      given_user_entry = {
        'new_parts' => [
          {
@@ -128,7 +128,7 @@ EOS
       [':assert', ':_acquisition_1_1', 'acquisition/acquirer', ':_mike'],
     ]
 
-    actual = AcquisitionTracker::Ui.translate_user_new_parts_to_facts(given_user_entry, 1)
+    actual = AcquisitionTracker::Ui.user_new_parts_to_facts(given_user_entry, 1)
     assert_equal expect, actual
   end
 
