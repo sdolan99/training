@@ -24,11 +24,15 @@ module AcquisitionTracker
     end
 
     MIN_QUANTITY = 3
-    def self.inventory_status_report(_io = $stdout, indexes = Indexes)
+    def self.low_inventory_report(indexes = Indexes)
       data = inventory_status(indexes)
       order = data.select { |_, v| v['count'] < MIN_QUANTITY }
       order['min_quantity'] = MIN_QUANTITY
       order
+    end
+
+    def self.inventory_report(indexes = Indexes)
+      data = inventory_status(indexes)
     end
   end
 end

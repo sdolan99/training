@@ -13,8 +13,13 @@ module AcquisitionTracker
   def self.run(args) # rubocop:disable Metrics/MethodLength
     hydrate load_journal_entries
     # handle inventory_status report
-    if args.first == 'inventory_status'
-      data = Queries.inventory_status_report
+    if args.first == 'low_inventory_report'
+      data = Queries.low_inventory_report
+      Ui.inventory_status_report(data)
+      exit
+    end
+    if args.first == 'inventory_report'
+      data = Queries.inventory_report
       Ui.inventory_status_report(data)
       exit
     end
