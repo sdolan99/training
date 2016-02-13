@@ -5,15 +5,15 @@ require 'digest/sha1'
 # Application Namespace
 module AcquisitionTracker
   # Functions to transform seed journal entries into "real" ones
-  module ReadJournal
+  module TransformJournal
     # journal_entries -> journal_entries
-    def transform_seed_entries(journal_entries)
+    def transform_entries(journal_entries)
       journal_entries.map do |journal_entry|
         substitute_real_timestamps!(journal_entry)
         substitute_real_fact_uuids!(journal_entry)
       end
     end
-    module_function :transform_seed_entries
+    module_function :transform_entries
 
     # symbol, time, int -> time
     def transform_timestamp(timecode, starting_time, increment)
@@ -57,11 +57,11 @@ module AcquisitionTracker
       end
     end
     module_function :substitute_uuid!
-  end # /ReadJournal
+  end # /TransformJournal
 end
 
 if $PROGRAM_NAME == __FILE__
-  include AcquisitionTracker::ReadJournal
+  include AcquisitionTracker::TransformJournal
   # read yaml from stdin, transform, write yaml to stdout
-  puts YAML.dump_stream(*transform_seed_entries(YAML.load_stream($stdin.read)))
+  puts YAML.dump_stream(*transform_entries(YAML.load_stream($stdin.read)))
 end

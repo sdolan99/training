@@ -76,5 +76,5 @@ facts:
 - ['assert', ':_processor2', 'processor/speed', '10']
 - ['assert', ':_processor2', 'processor/wattage', '500']
 - ['assert', ':_processor2_1', 'acquisition/timestamp', ':_t6']
-- ['assert', ':_processor2_1', 'acquisition/part_id', '_processor2']
+- ['assert', ':_processor2_1', 'acquisition/part_id', ':_processor2']
 - ['assert', ':_processor2_1', 'acquisition/acquirer', ':_mike']

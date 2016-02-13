@@ -1,8 +1,8 @@
 require 'time'
 require 'minitest/autorun'
-require_relative 'read_journal'
+require_relative 'transform_journal'
 
-include AcquisitionTracker::ReadJournal
+include AcquisitionTracker::TransformJournal
 
 describe 'substitute_real_timestamps' do
   it 'Works for :t_1' do

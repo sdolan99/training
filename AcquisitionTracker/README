@@ -12,3 +12,50 @@ To run tests: `ruby all.test.rb`
 Linter
 ----
 To verify formatting etc, use `rubocop`: `./rubocop`
+
+
+* User Documentation for CLI interface
+
+User Commands
+---
+  ```
+    $ ./at help
+    Available commands:
+      inventory_status - report what items need to buying
+      add_server - record acquisition of new server
+      add_part   - Add New Part
+  ```
+
+  Most commands will take input via an interactive text editor.  Local EDITOR must be set.
+
+Developer Documentation
+----
+
+The program can be run interactively in debug mode via:
+  ```
+    $ ./run repl
+
+    # Load Journal Entries in to index
+    > Queries.low_inventory_report
+
+    # View Indexes
+    > Indexes
+
+    # UI command
+    > Ui.inventory_status_report
+
+    # UI command that will open an editor for user entry
+    > Ui.add_part
+
+    # Commands module:
+    > Commands.
+  ```
+
+
+
+* Developer Documentation
+  - how to run the tests
+  - how to run the linter
+  - what each piece does
+    - use IRB
+    - run commands/queries
