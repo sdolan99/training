@@ -22,6 +22,10 @@ function be {
   bundle exec "$@"
 }
 
+function repl {
+  AT_DEV=true bundle exec pry -r './main.rb' -e 'include AcquisitionTracker; Cli.hydrate Cli.load_journal_entries;nil'
+}
+
 if [[ $# -gt 0 ]]; then
   eval "$1" "${@:2}"
 fi

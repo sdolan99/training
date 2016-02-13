@@ -4,6 +4,15 @@ require_relative 'indexes'
 module AcquisitionTracker
   # Methods that mutate the application's data
   module Commands
+    # loads the journal into the indexes
+    def self.hydrate(journal_entries)
+      journal_entries.each do |journal_entry|
+        command_name = journal_entry['command_name']
+        facts = journal_entry['facts']
+        Commands.send('index_' + command_name, facts)
+      end
+    end
+
     def self.index_create_acquirer(facts, indexes = Indexes) # rubocop:disable Metrics/AbcSize
       # this command asserts attributes about a *new* acquirer
       acquirer_ids = []

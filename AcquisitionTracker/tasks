@@ -1,0 +1,5 @@
+Collect Journal constants to a single module
+Cleanup ui.rb
+  - possibly add more than one ui module
+  - Clean out duplication
+Cleanup main.rb cli module

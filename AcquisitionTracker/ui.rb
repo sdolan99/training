@@ -1,11 +1,11 @@
-require_relative './read_journal'
+require_relative './transform_journal'
 require_relative './queries'
-require_relative './write_journal'
+require_relative './journal'
 
 module AcquisitionTracker
   # UI functions for printing data
   module Ui # rubocop:disable Metrics/MethodLengthm
-    def self.inventory_status_report(data, outstream = $stdout)
+    def self.inventory_status_report(data = Queries.inventory_report, outstream = $stdout)
       min_quantity = data['min_quantity']
       outstream.puts 'Inventory Status Report'
       outstream.puts " Min quantity: #{min_quantity}"
@@ -19,7 +19,7 @@ module AcquisitionTracker
       end
     end
 
-    def self.add_server(parts_list) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+    def self.add_server(parts_list = Queries.all_parts) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
       # Generate yaml in temp file to open in users text edit
       # Returns, read context of file and parse/perform command
       parts_list_string = parts_list(parts_list)
@@ -62,10 +62,10 @@ EOY
       end
       puts 'No errors detected'
       add_server_entry = write_new_add_server_entry(user_entry, parts_list)
-      JournalWriter.entry(add_server_entry)
+      Journal.write_entry(add_server_entry)
     end
 
-    def self.add_part(parts_list, outstream = $stdout)
+    def self.add_part(parts_list = Queries.all_parts, outstream = $stdout)
       # Generate yaml in temp file to open in users text edit
       # Returns, read context of file and parse/perform command
       parts_list_string = parts_list(parts_list)
@@ -114,7 +114,7 @@ EOY
       end
       puts 'No errors detected'
       add_part_entry = write_new_add_part_entry(user_entry, parts_list)
-      JournalWriter.entry(add_part_entry)
+      Journal.write_entry(add_part_entry)
     end
 
     def self.write_new_add_part_entry(user_entry, parts_list)
