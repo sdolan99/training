@@ -59,7 +59,7 @@ EOS
       'capacity_gb' => 500,
       'interface' => 'sata',
       'speed' => '7.2' }
-    actual = AcquisitionTracker::Ui.strip_namespaces_from_keys(given)
+    actual = AcquisitionTracker::Ui::Validation.strip_namespaces_from_keys(given)
     assert_equal expect, actual
   end
 
@@ -128,7 +128,7 @@ EOS
       [':assert', ':_acquisition_1_1', 'acquisition/acquirer', ':_mike'],
     ]
 
-    actual = AcquisitionTracker::Ui.user_new_parts_to_facts(given_user_entry, 1)
+    actual = AcquisitionTracker::Ui::Translate.user_new_parts_to_facts(given_user_entry, 1)
     assert_equal expect, actual
   end
 
@@ -191,7 +191,7 @@ EOS
       ]
     ]
 
-    actual = AcquisitionTracker::Ui.user_included_parts_to_facts(given_user_entry, given_parts_index, 1)
+    actual = AcquisitionTracker::Ui::Translate.user_included_parts_to_facts(given_user_entry, given_parts_index, 1)
     assert_equal expect, actual
   end
 end

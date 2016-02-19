@@ -127,7 +127,7 @@ module AcquisitionTracker
 
       def self.new_part_fact(new_part, date_acquired, indexv = rand, randv = rand)
         facts = []
-        type = Ui::Validation.get_type(new_part)
+        type = Translate.get_type(new_part)
         id = new_part["#{type}/temp_id"]
         temp_id = ":_#{type}_#{id}_#{randv}"
         new_part.each do |property, value|
