@@ -30,11 +30,7 @@ module AcquisitionTracker
       # Generate yaml in temp file to open in users text edit
       # Returns, read context of file and parse/perform command
       parts_list_string = parts_list(parts_list)
-      user_yaml = eval("\"" + AddServerTemplate + "\"")
-      tmp_dir = ENV['TMPDIR'] || '/tmp'
-      tmp_filename = 'ac-addserver.yaml'
-      tmp_path = File.join(tmp_dir, tmp_filename)
-      File.write(tmp_path, user_yaml)
+      tmp_path = make_tmpfile_for_editing('ac-addserver.yaml', AddServerTemplate, binding)
       errors, user_entry = Translate.read_user_entry(tmp_path)
       user_entry.nil?
       until errors.empty?
@@ -53,11 +49,7 @@ module AcquisitionTracker
       # Generate yaml in temp file to open in users text edit
       # Returns, read context of file and parse/perform command
       parts_list_string = parts_list(parts_list)
-      user_yaml = eval("\"" + AddPartTemplate + "\"")
-      tmp_dir = ENV['TMPDIR'] || '/tmp'
-      tmp_filename = 'ac-addpart.yaml'
-      tmp_path = File.join(tmp_dir, tmp_filename)
-      File.write(tmp_path, user_yaml)
+      tmp_path = make_tmpfile_for_editing('ac-addpart.yaml', AddPartTemplate, binding)
       errors, user_entry = Translate.read_user_add_part_entry(tmp_path)
       user_entry.nil?
       until errors.empty?
@@ -106,6 +98,14 @@ module AcquisitionTracker
     def self.print_part_chassis(attrs, column_width)
       line = "chassis/#{attrs['id'].slice(0, 8)}".ljust(column_width)
       line + attrs['chassis/model_number'].ljust(column_width)
+    end
+
+    def self.make_tmpfile_for_editing(tmp_filename, template_string, eval_binding = nil)
+      user_yaml = eval("\"" + template_string + "\"", eval_binding)
+      tmp_dir = ENV['TMPDIR'] || '/tmp'
+      tmp_path = File.join(tmp_dir, tmp_filename)
+      File.write(tmp_path, user_yaml)
+      tmp_path
     end
   end
 end
