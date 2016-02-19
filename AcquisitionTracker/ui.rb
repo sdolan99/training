@@ -65,9 +65,10 @@ module AcquisitionTracker
         $stdin.gets
         user_entry, errors = Translate.read_user_add_part_entry(tmp_path)
       end
-      puts 'No errors detected'
       add_part_entry = Translate.write_new_add_part_entry(user_entry, parts_list)
+
       Journal.write_entry(add_part_entry)
+      Commands.hydrate([add_part_entry])
     end
 
     def self.parts_list(parts)

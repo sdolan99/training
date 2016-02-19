@@ -23,7 +23,10 @@ function be {
 }
 
 function repl {
-  AT_DEV=true bundle exec pry -r './main.rb' -e 'include AcquisitionTracker; Cli.hydrate Cli.load_journal_entries;nil'
+  if [[ $1 ]]; then
+    export AT_DEV=true
+  fi
+  bundle exec pry -r './main.rb' -e 'include AcquisitionTracker; Commands.hydrate Journal.load_journal_entries;nil'
 }
 
 if [[ $# -gt 0 ]]; then

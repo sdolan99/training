@@ -69,11 +69,17 @@ module AcquisitionTracker
 
     def self.index_acquire_part(facts, indexes = Indexes) # rubocop:disable Metrics/AbcSize
       acquisition_ids = []
+      part_ids = []
       facts.each do |(_operation, id, property, value)|
         indexes['entities'][id] ||= {}
         indexes['entities'][id]['id'] ||= id
         indexes['entities'][id][property] = value
         acquisition_ids << id if acquisition?(property)
+        part_ids << id if part?(property)
+      end
+
+      part_ids.each do |id|
+        indexes['part_entities'][id] = indexes['entities'][id]
       end
 
       acquisition_ids.each do |id|
