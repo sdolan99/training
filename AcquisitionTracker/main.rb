@@ -5,8 +5,8 @@ require_relative 'ui'
 
 # Application Namespace
 module AcquisitionTracker
+  # cli write_entry point
   module Cli
-      # cli write_entry point
     def self.run(args) # rubocop:disable Metrics/MethodLength
       Commands.hydrate Journal.load_journal_entries
       # handle inventory_status report
@@ -44,8 +44,7 @@ module AcquisitionTracker
         '  add_part   - Add New Part',
       ].join("\n")
     end
-
-   end
+  end
 end
 
 # only invoke run if this module used as write_entry point from the shell

@@ -3,3 +3,8 @@ Cleanup ui.rb
   - possibly add more than one ui module
   - Clean out duplication
 Cleanup main.rb cli module
+
+Module from UI
+  - ui reports that just does the reporting
+  - 1 inventory report and mark each one that is low
+

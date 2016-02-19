@@ -90,9 +90,9 @@ EOS
   it 'prints processor part lines' do
     given = {
       'id' => '3464697f202a3f426bded86951a4d4e1',
-      'processor/model_number' => 'E3-1231',
-      'processor/speed' => '3.4',
-      'processor/wattage' => 80,
+        'processor/model_number' => 'E3-1231',
+        'processor/speed' => '3.4',
+        'processor/wattage' => 80,
     }
 
     expect = 'processor/3464697f  E3-1231             3.4 Ghz 80 watts'
@@ -101,20 +101,20 @@ EOS
   end
 
   it 'user_new_parts_to_facts' do
-     given_user_entry = {
-       'new_parts' => [
-         {
-           'processor/temp_id' => 1,
-           'processor/model_number' => 'Model-21A',
-         },
-         {
-           'memory/temp_id' => 2,
-           'memory/model_number' => 'hpram13-25',
-           'memory/memory_size_gb' => '55',
-         },
-       ],
-       'date_acquired' => '2016-01-22',
-     }
+    given_user_entry = {
+        'new_parts' => [
+            {
+                'processor/temp_id' => 1,
+                'processor/model_number' => 'Model-21A',
+            },
+            {
+                'memory/temp_id' => 2,
+                'memory/model_number' => 'hpram13-25',
+                'memory/memory_size_gb' => '55',
+            },
+        ],
+        'date_acquired' => '2016-01-22',
+    }
 
     expect = [
       [':assert', ':_processor_1_1', 'processor/model_number', 'Model-21A'],
@@ -191,7 +191,7 @@ EOS
       ]
     ]
 
-    actual = AcquisitionTracker::Ui.translate_user_included_parts_to_facts(given_user_entry, given_parts_index, 1)
+    actual = AcquisitionTracker::Ui.user_included_parts_to_facts(given_user_entry, given_parts_index, 1)
     assert_equal expect, actual
   end
 end

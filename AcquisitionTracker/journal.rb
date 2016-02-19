@@ -1,4 +1,5 @@
 module AcquisitionTracker
+  # Manage the journal entries
   module  Journal
     SEED_JOURNAL = 'seed.yaml'
     DATA_DIR = "#{ENV['HOME']}/.AcquisitionTracker"
