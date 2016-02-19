@@ -46,6 +46,7 @@ module AcquisitionTracker
       puts 'No errors detected'
       add_server_entry = Translate.write_new_add_server_entry(user_entry, parts_list)
       Journal.write_entry(add_server_entry)
+      Commands.hydrate([add_server_entry])
     end
 
     def self.add_part(parts_list = Queries.all_parts)
@@ -112,24 +113,24 @@ end
 AcquisitionTracker::Ui::AddServerTemplate = <<'EOY'
 # add server
 # -- Parts list
-#{parts_list_string.map { |l| " # - #{l.strip}" }.join("\n")}
+#{parts_list_string.map { |l| "# - #{l.strip}" }.join("\n")}
 
 # Does the Server need any parts not in the above list?
 new_parts:
-  # - processor/temp_id: 1
-  #   processor/model_number: Model-21A
-  #   processor/speed: 10
-  #   processor/wattage: 80
-  # - memory/temp_id: 2
-  #   memory/model_number: hpram13-25
-  #   memory/type: dram
-  #   memory/capacity_gb: 34
+#- processor/temp_id: 1
+#  processor/model_number: Model-21A
+#  processor/speed: 10
+#  processor/wattage: 80
+#- memory/temp_id: 2
+#  memory/model_number: hpram13-25
+#  memory/type: dram
+#  memory/capacity_gb: 34
 
 # What Parts is the Server made from?
 included_parts:
-  # - processor/xxxxxx
-  # - memory/xxxxxxx
-  # ...
+#- processor/xxxxxx
+#- memory/xxxxxxx
+# ...
 
 # What date was it acquired?
 date_acquired: #{Time.now.to_s.split(' ').first}
@@ -140,28 +141,30 @@ AcquisitionTracker::Ui::AddPartTemplate = <<'EOY'
 
 # either select id of existing part
 
+#{parts_list_string.map { |l| "#  #{l.strip}" }.join("\n")}
+
 existing_part_id:
-#{parts_list_string.map { |l| " # - #{l.strip}" }.join("\n")}
+
 
 # or, introduce a new part and record its aquisition:
 
 # part attrs:
 #
-#   processor/temp_id (int)
-#   processor/model_number (str)
-#   processor/speed
-#   processor/wattage
+# processor/temp_id (int)
+# processor/model_number (str)
+# processor/speed
+# processor/wattage
 #
-#   memory/temp_id
-#   memory/model_number
-#   memory/type: dram
-#   memory/capacity_gb
+# memory/temp_id
+# memory/model_number
+# memory/type: dram
+# memory/capacity_gb
 
 # e.g. ucomment these lines to add a processor
-# new_part:
-#   processor/model_number: ...
-#   processor/speed: ...
-#   processor/wattage: ...
+#new_part:
+#  processor/model_number: ...
+#  processor/speed: ...
+#  processor/wattage: ...
 
 # What date was it acquired?
 date_acquired: #{Time.now.to_s.split(' ').first}
