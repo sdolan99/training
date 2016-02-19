@@ -30,31 +30,7 @@ module AcquisitionTracker
       # Generate yaml in temp file to open in users text edit
       # Returns, read context of file and parse/perform command
       parts_list_string = parts_list(parts_list)
-      user_yaml = <<EOY
-# add server
-# -- Parts list
-#{parts_list_string.map { |l| " # - #{l.strip}" }.join("\n")}
-
-# Does the Server need any parts not in the above list?
-new_parts:
-  # - processor/temp_id: 1
-  #   processor/model_number: Model-21A
-  #   processor/speed: 10
-  #   processor/wattage: 80
-  # - memory/temp_id: 2
-  #   memory/model_number: hpram13-25
-  #   memory/type: dram
-  #   memory/capacity_gb: 34
-
-# What Parts is the Server made from?
-included_parts:
-  # - processor/xxxxxx
-  # - memory/xxxxxxx
-  # ...
-
-# What date was it acquired?
-date_acquired: #{Time.now.to_s.split(' ').first}
-EOY
+      user_yaml = eval("\"" + AddServerTemplate + "\"")
       tmp_dir = ENV['TMPDIR'] || '/tmp'
       tmp_filename = 'ac-addserver.yaml'
       tmp_path = File.join(tmp_dir, tmp_filename)
@@ -76,37 +52,7 @@ EOY
       # Generate yaml in temp file to open in users text edit
       # Returns, read context of file and parse/perform command
       parts_list_string = parts_list(parts_list)
-      user_yaml = <<EOY
-# add part
-
-# either select id of existing part
-
-existing_part_id:
-#{parts_list_string.map { |l| " # - #{l.strip}" }.join("\n")}
-
-# or, introduce a new part and record its aquisition:
-
-# part attrs:
-#
-#   processor/temp_id (int)
-#   processor/model_number (str)
-#   processor/speed
-#   processor/wattage
-#
-#   memory/temp_id
-#   memory/model_number
-#   memory/type: dram
-#   memory/capacity_gb
-
-# e.g. ucomment these lines to add a processor
-# new_part:
-#   processor/model_number: ...
-#   processor/speed: ...
-#   processor/wattage: ...
-
-# What date was it acquired?
-date_acquired: #{Time.now.to_s.split(' ').first}
-EOY
+      user_yaml = eval("\"" + AddPartTemplate + "\"")
       tmp_dir = ENV['TMPDIR'] || '/tmp'
       tmp_filename = 'ac-addpart.yaml'
       tmp_path = File.join(tmp_dir, tmp_filename)
@@ -161,3 +107,61 @@ EOY
     end
   end
 end
+
+AcquisitionTracker::Ui::AddServerTemplate = <<'EOY'
+# add server
+# -- Parts list
+#{parts_list_string.map { |l| " # - #{l.strip}" }.join("\n")}
+
+# Does the Server need any parts not in the above list?
+new_parts:
+  # - processor/temp_id: 1
+  #   processor/model_number: Model-21A
+  #   processor/speed: 10
+  #   processor/wattage: 80
+  # - memory/temp_id: 2
+  #   memory/model_number: hpram13-25
+  #   memory/type: dram
+  #   memory/capacity_gb: 34
+
+# What Parts is the Server made from?
+included_parts:
+  # - processor/xxxxxx
+  # - memory/xxxxxxx
+  # ...
+
+# What date was it acquired?
+date_acquired: #{Time.now.to_s.split(' ').first}
+EOY
+
+AcquisitionTracker::Ui::AddPartTemplate = <<'EOY'
+# add part
+
+# either select id of existing part
+
+existing_part_id:
+#{parts_list_string.map { |l| " # - #{l.strip}" }.join("\n")}
+
+# or, introduce a new part and record its aquisition:
+
+# part attrs:
+#
+#   processor/temp_id (int)
+#   processor/model_number (str)
+#   processor/speed
+#   processor/wattage
+#
+#   memory/temp_id
+#   memory/model_number
+#   memory/type: dram
+#   memory/capacity_gb
+
+# e.g. ucomment these lines to add a processor
+# new_part:
+#   processor/model_number: ...
+#   processor/speed: ...
+#   processor/wattage: ...
+
+# What date was it acquired?
+date_acquired: #{Time.now.to_s.split(' ').first}
+EOY

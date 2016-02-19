@@ -46,7 +46,9 @@ module AcquisitionTracker
         facts = []
 
         if user_entry.key?('new_part')
-          facts += new_part_fact(user_entry, randv)
+          require 'pp'
+          pp user_entry
+          facts += new_part_fact(user_entry['new_part'], randv)
         else
           facts += existing_part_user_entry_to_fact(user_entry, parts_list)
         end
