@@ -16,6 +16,7 @@ module AcquisitionTracker
     def_delegator :@toplevel, :keys
     def_delegator :@toplevel, :each
     def_delegator :@toplevel, :select
+    def_delegator :@toplevel, :key?
   end
   Indexes = TwoLevelHash.new
 end

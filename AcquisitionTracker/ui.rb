@@ -7,16 +7,22 @@ module AcquisitionTracker
   # UI functions for printing data
   module Ui
     def self.inventory_status_report(data = Queries.inventory_report, outstream = $stdout)
-      min_quantity = data['min_quantity']
+      min_quantity = data.key?('min_quantity') ? data['min_quantity'] : 0
       outstream.puts 'Inventory Status Report'
-      outstream.puts " Min quantity: #{min_quantity}"
-      outstream.puts ''
+      if min_quantity != 0
+        outstream.puts " Min quantity: #{min_quantity}"
+        outstream.puts ''
+      end
       outstream.puts 'Quantity  Type'
 
       data.each do |i, p|
         next if i == 'min_quantity'
         type = Translate.get_type(p['properties'])
-        outstream.puts "#{p['count']} / #{min_quantity}   -  #{type}"
+        if min_quantity != 0
+          outstream.puts "#{p['count']} / #{min_quantity}   -  #{type}"
+        else
+          outstream.puts "#{p['count']}  -  #{type}"
+        end
       end
     end
 
