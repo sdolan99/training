@@ -29,17 +29,11 @@ module AcquisitionTracker
     def self.add_server(parts_list = Queries.all_parts) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
       # Generate yaml in temp file to open in users text edit
       # Returns, read context of file and parse/perform command
-      parts_list_string = parts_list(parts_list)
-      tmp_path = make_tmpfile_for_editing('ac-addserver.yaml', AddServerTemplate, binding)
-      errors, user_entry = Translate.read_user_entry(tmp_path)
-      user_entry.nil?
-      until errors.empty?
-        puts errors
-        puts 'Press enter to continue correcting errors.'
-        $stdin.gets
-        user_entry, errors = Translate.read_user_entry(tmp_path)
-      end
-      puts 'No errors detected'
+      context = { :parts_list_string => parts_list(parts_list) }
+      file_contents = evaluate_template(AddServerTemplate, context )
+      tmp_path = make_tmpfile_for_editing('ac-addserver.yaml', file_contents)
+      user_entry = read_entry_until_valid { Translate.read_user_entry(tmp_path) }
+
       add_server_entry = Translate.write_new_add_server_entry(user_entry, parts_list)
       Journal.write_entry(add_server_entry)
       Commands.hydrate([add_server_entry])
@@ -48,16 +42,10 @@ module AcquisitionTracker
     def self.add_part(parts_list = Queries.all_parts)
       # Generate yaml in temp file to open in users text edit
       # Returns, read context of file and parse/perform command
-      parts_list_string = parts_list(parts_list)
-      tmp_path = make_tmpfile_for_editing('ac-addpart.yaml', AddPartTemplate, binding)
-      errors, user_entry = Translate.read_user_add_part_entry(tmp_path)
-      user_entry.nil?
-      until errors.empty?
-        puts errors
-        puts 'Press enter to continue correcting errors.'
-        $stdin.gets
-        user_entry, errors = Translate.read_user_add_part_entry(tmp_path)
-      end
+      context = { :parts_list_string => parts_list(parts_list) }
+      file_contents = evaluate_template(AddPartTemplate, context)
+      tmp_path = make_tmpfile_for_editing('ac-addpart.yaml', file_contents)
+      user_entry = read_entry_until_valid { Translate.read_user_add_part_entry(tmp_path) }
       add_part_entry = Translate.write_new_add_part_entry(user_entry, parts_list)
 
       Journal.write_entry(add_part_entry)
@@ -100,12 +88,35 @@ module AcquisitionTracker
       line + attrs['chassis/model_number'].ljust(column_width)
     end
 
-    def self.make_tmpfile_for_editing(tmp_filename, template_string, eval_binding = nil)
-      user_yaml = eval("\"" + template_string + "\"", eval_binding)
+    def self.evaluate_template(template, context = {})
+      b = binding
+      v = nil
+
+      context.each do |k, value|
+        v = value
+        eval("#{k.to_s} = v", b)
+      end
+      eval("\"" + template + "\"", b)
+    end
+
+    def self.make_tmpfile_for_editing(tmp_filename, contents)
       tmp_dir = ENV['TMPDIR'] || '/tmp'
       tmp_path = File.join(tmp_dir, tmp_filename)
-      File.write(tmp_path, user_yaml)
+      File.write(tmp_path, contents)
       tmp_path
+    end
+
+    def self.read_entry_until_valid(&blk)
+      errors, user_entry = blk.call
+      user_entry.nil?
+      until errors.empty?
+        puts errors
+        puts 'Press enter to continue correcting errors.'
+        $stdin.gets
+        user_entry, errors = blk.call
+      end
+      puts 'No errors detected'
+      user_entry
     end
   end
 end
