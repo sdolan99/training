@@ -23,7 +23,7 @@ module AcquisitionTracker
     end
 
     get '/acquire_part/' do
-      parts_list = Ui::parts_list(Queries.all_parts).map { |l| l.strip }
+      parts_list = Queries.all_parts
       erb :add_part_form, :locals => {:parts_list => parts_list}
     end
 
@@ -35,7 +35,7 @@ module AcquisitionTracker
       puts add_part_entry
       Journal.write_entry(add_part_entry)
       Commands.hydrate([add_part_entry])
-      "Added part #{user_entry['existing_part_id']}"
+      redirect '/'
     end
   end
 end

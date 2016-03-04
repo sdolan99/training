@@ -2,10 +2,16 @@
 <br/>
 List of parts:
 <ul>
-  <%= locals[:parts_list].map { |p| "<li>#{p}</li>"}.join("\n") %>
 </ul>
 <form action="/acquire_part/" method="post">
-    Part ID: <select name='existing_part_id'><option value='4124cd75'>Model-21A</option>
+  Part ID: <select name='existing_part_id'>
+    <% parts_list.each do |part|
+         id = part['id']
+         type = AcquisitionTracker::Ui::Translate.get_type(part)
+         model = part["#{type}/model_number"]
+    %>
+      <option value=<%= id %>><%= model %></option>
+    <% end %>
     </select>
     <br/>
     Acquisition Date: <input type="datetime" value="<%= Time.now %>" name="date_acquired">
