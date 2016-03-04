@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Part</title>
+</head>
+<body>
+<h1>Add a new existing part:</h1>
+<br/>
+List of parts:
+<ul>
+  <%= locals[:parts_list].map { |p| "<li>#{p}</li>"}.join("\n") %>
+</ul>
+<form action="/acquire_part/" method="post">
+    Part ID: <input type="text" name="existing_part_id">
+    <br/>
+    <input type="hidden" value="<%= Time.now %>" name="date_acquired">
+    <input type="submit">
+</form>
+</body>
+</html>
