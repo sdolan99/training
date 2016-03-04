@@ -24,8 +24,6 @@ module AcquisitionTracker
 
     get '/acquire_part/' do
       parts_list = Ui::parts_list(Queries.all_parts).map { |l| l.strip }
-      puts "parts are:"
-      puts parts_list
       erb :add_part_form, :locals => {:parts_list => parts_list}
     end
 
