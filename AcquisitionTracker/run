@@ -2,7 +2,7 @@
 
 function test {
   local file=${1-all.test.rb}
-  bundle exec ruby $file
+  bundle exec ruby "$file"
 }
 
 function lint {
@@ -30,7 +30,7 @@ function repl {
 }
 
 function server {
-  bundle exec rackup
+  bundle exec puma
 }
 if [[ $# -gt 0 ]]; then
   eval "$1" "${@:2}"
