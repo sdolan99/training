@@ -15,7 +15,7 @@ function build {
 }
 
 function acquisition_tracker {
-  be ruby main.rb "$@"
+  bundle exec ruby main.rb "$@"
 }
 
 function be {
@@ -30,7 +30,7 @@ function repl {
 }
 
 function server {
-  rackup
+  bundle exec rackup
 }
 if [[ $# -gt 0 ]]; then
   eval "$1" "${@:2}"

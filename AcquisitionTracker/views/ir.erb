@@ -1,0 +1,11 @@
+<h1>Inventory Report</h1>
+<br>
+<% if data.key?(min_quantity) && data['min_quantity'] != 0 %>
+  <h3>Min Quantity: <%= data['min_quantity'] %>
+<% end %>
+<br>
+Quantity      Type
+<% data.each do |i, p| %>
+  <%= p['count'] %>   <%= p['properties'] %>
+<% end %>
+
