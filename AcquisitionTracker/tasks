@@ -1,10 +1,2 @@
-Collect Journal constants to a single module
-Cleanup ui.rb
-  - possibly add more than one ui module
-  - Clean out duplication
-Cleanup main.rb cli module
-
-Module from UI
-  - ui reports that just does the reporting
-  - 1 inventory report and mark each one that is low
-
+Create file server.rb
+use sinatra - wrap that serves context of indexes as plaintext or however

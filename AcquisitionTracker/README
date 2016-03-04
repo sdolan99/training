@@ -47,15 +47,4 @@ The program can be run interactively in debug mode via:
     # UI command that will open an editor for user entry
     > Ui.add_part
 
-    # Commands module:
-    > Commands.
   ```
-
-
-
-* Developer Documentation
-  - how to run the tests
-  - how to run the linter
-  - what each piece does
-    - use IRB
-    - run commands/queries

@@ -29,6 +29,9 @@ function repl {
   bundle exec pry -r './main.rb' -e 'include AcquisitionTracker; Commands.hydrate Journal.load_journal_entries;nil'
 }
 
+function server {
+  rackup
+}
 if [[ $# -gt 0 ]]; then
   eval "$1" "${@:2}"
 fi
