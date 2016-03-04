@@ -168,8 +168,6 @@ module AcquisitionTracker
       def self.get_type(attrs)
         attrs.keys.grep(%r{/}).first.split('/').first
       end
-
-
     end
   end
 end

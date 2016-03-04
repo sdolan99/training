@@ -1,0 +1,9 @@
+<table>
+<tr>
+<th>Quantity</th><th>Type</th>
+<% data.each do |id, hash| %>
+    <tr>
+      <td><%= hash['count'] %></td> <td><%= erb :part_line, :locals => { :part_properties => hash['properties'] } %></td>
+  </tr>
+  <% end %>
+</table>

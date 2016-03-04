@@ -4,8 +4,4 @@
   <h3>Min Quantity: <%= data['min_quantity'] %>
 <% end %>
 <br>
-Quantity      Type
-<% data.each do |i, p| %>
-  <%= p['count'] %>   <%= p['properties'] %>
-<% end %>
-
+<%= erb :ir_table, :locals => { :data => data }%>
