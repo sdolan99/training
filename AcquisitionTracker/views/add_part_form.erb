@@ -14,7 +14,8 @@ List of parts:
 <form action="/acquire_part/" method="post">
     Part ID: <input type="text" name="existing_part_id">
     <br/>
-    <input type="hidden" value="<%= Time.now %>" name="date_acquired">
+    Acquisition Date: <input type="datetime" value="<%= Time.now %>" name="date_acquired">
+    <br/>
     <input type="submit">
 </form>
 </body>

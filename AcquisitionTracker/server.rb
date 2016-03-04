@@ -5,11 +5,11 @@ module AcquisitionTracker
   # TODO: Where do we hydrate on startup?
   class AtServer < Sinatra::Base
     get '/' do
-      erb:index
+      erb :index
     end
 
     get '/api' do
-      erb:api
+      erb :api
     end
 
     get '/inventory_report/' do
