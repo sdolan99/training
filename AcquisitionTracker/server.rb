@@ -24,7 +24,7 @@ module AcquisitionTracker
 
     get '/acquire_part/' do
       parts_list = Queries.all_parts
-      erb :add_part_form, :locals => {:parts_list => parts_list}
+      erb :add_existing_part_form, :locals => {:parts_list => parts_list}
     end
 
     post '/acquire_part/' do
@@ -36,6 +36,14 @@ module AcquisitionTracker
       Journal.write_entry(add_part_entry)
       Commands.hydrate([add_part_entry])
       redirect '/'
+    end
+
+    get '/acquire_new_part/' do
+      erb :add_new_part_form, :locals => { :selected_part_type => params[:selected_part_type] }
+    end
+
+    post '/acquire_new_part/' do
+      "Parts are: #{params}"
     end
   end
 end

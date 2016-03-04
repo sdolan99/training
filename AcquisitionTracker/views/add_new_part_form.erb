@@ -1,0 +1,67 @@
+<% unless selected_part_type %>
+  <form action="/acquire_new_part/" method='get'>
+    Select Part Type: <select name='selected_part_type'>
+      <option value='processor'>Processor</option>
+      <option value='memory'>Memory</option>
+      <option value='disk'>Disk</option>
+      <option value='chassis'>Chassis</option>
+    </select>
+    <br/>
+    <input type=submit>
+</form>
+<% else %>
+  <form action="/acquire_new_part/" method='post'>
+  <table>
+    <tr>
+      <th>Property</th><th>Value</th>
+    </tr>
+  <% case selected_part_type 
+     when 'processor' %>
+    <tr>
+      <td>processor/model_number</td><td><input type=text name='processor/model_number'/></td>
+    </tr>
+    <tr>
+      <td>processor/speed</td><td><input type=text name='processor/speed'/></td>
+    </tr>
+    <tr>
+      <td>processor/wattage</td><td><input type=text name='processor/wattage'/></td>
+    </tr>
+  <% when 'memory' %>
+    <tr>
+      <td>memory/model_number</td><td><input type=text name='memory/model_number'/></td>
+    </tr>
+    <tr>
+      <td>memory/type</td><td><input type=text name='memory/type'/></td>
+    </tr>
+    <tr>
+      <td>memory/capacity_gb</td><td><input type=text name='memory/capacity_gb'/></td>
+    </tr>
+  <% when 'disk' %>
+    <tr>
+      <td>disk/model_number</td><td><input type=text name='disk/model_number'/></td>
+    </tr>
+    <tr>
+      <td>disk/interface</td><td><input type=text name='disk/interface'/></td>
+    </tr>
+    <tr>
+      <td>disk/speed</td><td><input type=text name='disk/speed'/></td>
+    </tr>
+    <tr>
+      <td>disk/capacity_gb</td><td><input type=text name='disk/capacity_gb'/></td>
+    </tr>
+  <% when 'chassis' %>
+    <tr>
+      <td>chassis/model_number</td><td><input type=text name='disk/model_number'/></td>
+    </tr>
+  <% else %>
+    <tr>
+      <td>No Properties available</td>
+    </tr>
+  <% end %>
+  <tr>
+    <td>Acquisition Date</td><td><input type=datetime name='date_acquired' value='<%= Time.now %>' /></td>
+<br/>
+</table>
+<input type=submit>
+</form>
+<% end %>
