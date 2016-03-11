@@ -118,8 +118,63 @@ module AcquisitionTracker
       puts 'No errors detected'
       user_entry
     end
-  end
-end
+
+    module Web
+      def self.transform_hash(original, options={}, &block)
+        original.inject({}){|result, (key,value)|
+        value = if (options[:deep] && Hash === value)
+                  transform_hash(value, options, &block)
+                else
+                    value
+                end
+        block.call(result,key,value)
+        result
+        }
+      end
+
+      # Convert keys to strings
+      def self.stringify_keys(hash)
+        transform_hash(hash) {|hash, key, value|
+          hash[key.to_s] = value
+        }
+      end
+
+      # Convert keys to strings, recursively
+      def self.deep_stringify_keys(hash)
+        transform_hash(hash, :deep => true) {|hash, key, value|
+          hash[key.to_s] = value
+        }
+      end
+
+      def self.acquire_server(params)
+        params = stringify_keys(params)
+        facts = params['included_parts'].flat_map { |pid| Translate.part_id_to_fact(params, pid) }
+        part_ids = facts
+                        .select { |fact| fact[2] == 'acquisition/part_id' }
+                        .map { |fact| fact[3] }
+                        .uniq
+        uuid = Digest::SHA1.hexdigest(rand.to_s).slice(0,32)
+        group_fact = [
+          ':assert',
+          uuid,
+          'group/units',
+          part_ids,
+        ]
+
+        facts << group_fact
+        add_server_entry_raw = {
+           'timestamp' => Time.now,
+           'command_name' => 'acquire_server',
+           'facts' => facts,
+        }
+        add_server_entry = TransformJournal.transform_entries([add_server_entry_raw]).first
+        Journal.write_entry(add_server_entry)
+        Commands.hydrate([add_server_entry])
+        uuid
+      end
+    end # End Web
+  end # End UI
+end # End AcquisitionTracker
 
 AcquisitionTracker::Ui::AddServerTemplate = <<'EOY'
 # add server

@@ -8,6 +8,8 @@ AcquisitionTracker::Commands.hydrate AcquisitionTracker::Journal.load_journal_en
 module AcquisitionTracker
   # TODO: Where do we hydrate on startup?
   class AtServer < Sinatra::Base
+    $session = {}
+
     get '/' do
       erb :index
     end
@@ -44,6 +46,41 @@ module AcquisitionTracker
 
     post '/acquire_new_part/' do
       "Parts are: #{params}"
+    end
+
+    get '/acquire_server/' do
+      $session[:acquire_server] ||= {}
+      "acquire server"
+    end
+
+    post '/acquire_server/' do
+      # Submit to database
+      $session[:acquire_server][:date_acquired] = params[:date_acquired]
+      id = Ui::Web.acquire_server($session[:acquire_server])
+      $session[:acquire_server] = nil
+      $session[:last_acquire_server_id] = id
+      redirect '/' unless id
+    end
+
+    post '/acquire_server/included_parts/' do
+      $session[:acquire_server][:included_parts] ||= []
+      $session[:acquire_server][:included_parts] << params[:part_id]
+      redirect '/acquire_server/'
+    end
+
+    get '/add_names/' do
+      $session[:names] ||= []
+      erb :names, :locals => { :names => $session[:names] }
+    end
+
+    post '/add_names/insert_name/' do
+      $session[:names] << params[:name]
+      redirect '/add_names/'
+    end
+
+    post '/add_names/delete_name/' do
+      $session[:names].delete(params[:name])
+      redirect '/add_names/'
     end
   end
 end
