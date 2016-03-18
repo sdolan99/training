@@ -34,7 +34,6 @@ module AcquisitionTracker
       user_entry['existing_part_id'] = params[:existing_part_id]
       user_entry['date_acquired'] = params[:date_acquired]
       add_part_entry = Ui::Translate.write_new_add_part_entry(user_entry, Queries.all_parts)
-      puts add_part_entry
       Journal.write_entry(add_part_entry)
       Commands.hydrate([add_part_entry])
       redirect '/'
@@ -50,7 +49,15 @@ module AcquisitionTracker
 
     get '/acquire_server/' do
       $session[:acquire_server] ||= {}
-      "acquire server"
+      $session[:acquire_server][:included_parts] ||= []
+      erb :acquire_server_form, :locals => { :parts_list => Queries.all_parts,
+                                             :selected_parts => $session[:acquire_server][:included_parts] }
+    end
+
+    post '/acquire_server/remove_part/' do
+      $session[:acquire_server][:included_parts].delete(params[:part])
+      puts "removed part #{params[:part]}"
+      redirect '/acquire_server/'
     end
 
     post '/acquire_server/' do
@@ -64,7 +71,7 @@ module AcquisitionTracker
 
     post '/acquire_server/included_parts/' do
       $session[:acquire_server][:included_parts] ||= []
-      $session[:acquire_server][:included_parts] << params[:part_id]
+      $session[:acquire_server][:included_parts] << params[:existing_part_id]
       redirect '/acquire_server/'
     end
 

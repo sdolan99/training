@@ -1,0 +1,29 @@
+<h1>Create a new server with exisiting parts</h1>
+<br/>
+<form action="/acquire_server/included_parts/" method=post>
+  Part Id: <select name='existing_part_id'>
+    <% parts_list.each do |part|
+         id = part['id']
+         type = AcquisitionTracker::Ui::Translate.get_type(part)
+         model = part["#{type}/model_number"]
+    %>
+      <option value=<%= id %>><%= model %></option>
+    <% end %>
+    </select>
+    <br/>
+    <br/>
+    <input type="submit">
+</form>
+<hr>
+List of selected parts:
+<ul>
+  <% selected_parts.each do |id| %>
+    <li><%= id %> <form action='/acquire_server/remove_part/' method=post><input name='part' type=hidden value='<%= id %>'><input type=submit value=remove></form></li>
+  <% end %>
+</ul>
+<hr>
+<form action="/acquire_server/" method='post'>
+    Acquisition Date: <input type="datetype" value="<%= Time.now %>" name="date_acquired">
+    <br/>
+    <input type=submit>
+</form>

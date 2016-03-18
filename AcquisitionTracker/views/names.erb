@@ -1,0 +1,13 @@
+Names:
+<ul>
+<% names.each do |name| %>
+  <li><%= name %> <form action='/add_names/delete_name/' method=post><input name='name' type=hidden value='<%= name %>'><input type=submit value=delete></form></li>
+<% end %>
+</ul>
+
+<form action='/add_names/insert_name/' method='post'>
+  Name: <input type=text name='name'>
+  <br/>
+  <input type=submit>
+</form>
+
