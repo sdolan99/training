@@ -3,21 +3,21 @@ require_relative 'validation'
 module AcquisitionTracker
   module Ui
     # Manipulate journal entries and user input
-    module Translate
+    module Translate # rubocop:disable Metrics/ModuleLength
       def self.write_new_add_part_entry(user_entry, parts_list)
         journal_entry = {
-                          'timestamp' => Time.now,
-                          'command_name' => 'acquire_part',
-                          'facts' => part_entry_to_facts(user_entry, parts_list),
+          'timestamp' => Time.now,
+          'command_name' => 'acquire_part',
+          'facts' => part_entry_to_facts(user_entry, parts_list),
         }
         journal_entry
       end
 
       def self.write_new_add_server_entry(user_entry, parts_list)
         journal_entry = {
-                          'timestamp' => Time.now,
-                          'command_name' => 'acquire_server',
-                          'facts' => user_entry_to_facts(user_entry, parts_list),
+          'timestamp' => Time.now,
+          'command_name' => 'acquire_server',
+          'facts' => user_entry_to_facts(user_entry, parts_list),
         }
         journal_entry
       end
@@ -61,14 +61,14 @@ module AcquisitionTracker
         facts
       end
 
-      def self.user_entry_to_facts(user_entry, parts_list, randv = rand)
+      def self.user_entry_to_facts(user_entry, parts_list, randv = rand) # rubocop:disable Metrics/MethodLength
         facts = []
         facts += user_new_parts_to_facts(user_entry, randv) if user_entry['new_parts']
         facts += user_included_parts_to_facts(user_entry, parts_list, randv) if user_entry['included_parts']
         part_ids = facts
-                       .select { |fact| fact[2] == 'acquisition/part_id' }
-                       .map { |fact| fact[3] }
-                       .uniq
+                   .select { |fact| fact[2] == 'acquisition/part_id' }
+                   .map { |fact| fact[3] }
+                   .uniq
         group_fact = [
           ':assert',
           ":_server_#{randv}",
@@ -90,26 +90,26 @@ module AcquisitionTracker
         facts
       end
 
-      def self.part_id_to_fact(user_entry, full_id, indexv = rand, randv = rand, date_acquired = nil)
+      def self.part_id_to_fact(user_entry, full_id, indexv = rand, randv = rand, date_acquired = nil) # rubocop:disable Metrics/MethodLength
         facts = []
         acq_id = ":_acquisition_#{indexv}_#{randv}"
         time_fact = [
-            ':assert',
-            acq_id,
-            'acquisition/timestamp',
-            user_entry['date_acquired'] || date_acquired,
+          ':assert',
+          acq_id,
+          'acquisition/timestamp',
+          user_entry['date_acquired'] || date_acquired,
         ]
         part_id_fact = [
-            ':assert',
-            acq_id,
-            'acquisition/part_id',
-            full_id,
+          ':assert',
+          acq_id,
+          'acquisition/part_id',
+          full_id,
         ]
         acquirer_fact = [
-                          ':assert',
-                          acq_id,
-                          'acquisition/acquirer',
-                          ':_mike', # TODO: hardcoded
+          ':assert',
+          acq_id,
+          'acquisition/acquirer',
+          ':_mike', # TODO: hardcoded
         ]
         facts << time_fact
         facts << part_id_fact
@@ -125,7 +125,7 @@ module AcquisitionTracker
         facts
       end
 
-      def self.new_part_fact(new_part, date_acquired, indexv = rand, randv = rand)
+      def self.new_part_fact(new_part, date_acquired, indexv = rand, randv = rand) # rubocop:disable Metrics/MethodLength
         facts = []
         type = Translate.get_type(new_part)
         id = new_part["#{type}/temp_id"]
@@ -133,10 +133,10 @@ module AcquisitionTracker
         new_part.each do |property, value|
           next if property.include?('temp_id')
           current_fact = [
-                           ':assert',
-                           temp_id,
-                           property,
-                           value,
+            ':assert',
+            temp_id,
+            property,
+            value,
           ]
           facts << current_fact
         end
@@ -157,7 +157,7 @@ module AcquisitionTracker
           ':assert',
           acq_id,
           'acquisition/acquirer',
-          ':_mike',  # TODO: hardcoded
+          ':_mike', # TODO: hardcoded
         ]
         facts << time_fact
         facts << part_id_fact
