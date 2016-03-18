@@ -12,6 +12,7 @@ module AcquisitionTracker
       end
 
       def self.add_part_user_data(part_data)
+        # TODO: Validate if part already exists
         errors = []
         if part_data['existing_part_id'].nil? && part_data['new_part'].nil?
           errors << ['New or existing part must be chosen']

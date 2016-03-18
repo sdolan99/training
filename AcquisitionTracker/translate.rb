@@ -46,18 +46,36 @@ module AcquisitionTracker
         facts = []
 
         if user_entry.key?('new_part')
-          facts += create_new_part_facts(user_entry['new_part'], user_entry['date_acquired'], randv)
+          facts += create_part_and_acquisition_facts(user_entry['new_part'], user_entry['date_acquired'], randv)
         else
           facts += existing_part_user_entry_to_fact(user_entry, parts_list)
         end
         facts
       end
 
+      # Parameters:
+      #  Requires:
+      #    user_entry - {
+      #      'date_acquired' => '2016-03-18 14:08:43 -0700'
+      #      'existing_part_id' => 'pa'
+      #    }
+      #    parts_list - [
+      #      { 'id' => 'part1' }
+      #    ]
+      #    index = 1
+      #    randv = 42
+      #  returns: [
+      #    [ ':assert', ':_acquisition_1_42', 'acquisition/timestamp', '2016-03-18 14:08:43 -0700' ]
+      #    [ ':assert', ':_acquisition_1_42', 'acquisition/part_id', 'part1' ]
+      #    [ ':assert', ':_acquisition_1_42', 'acquisition/acquirer, ':_mike' ]
+      #   ]
+      #
       def self.existing_part_user_entry_to_fact(user_entry, parts_list, index = 1, randv = rand)
         facts = []
         full_part_ids = parts_list.map { |entity| entity['id'] }
         full_id = full_part_ids.detect { |fid| fid.start_with?(user_entry['existing_part_id']) }
-        facts += part_id_to_fact(user_entry, full_id, index, randv, user_entry['date_acquired'])
+        facts += create_acquisition_facts_from_part_id(user_entry, full_id, index, randv, user_entry['date_acquired'])
+        # facts += create_acquisition_facts(user_entry['date_acquired'], full_id, ':_mike', ":_acquisition_#{index}_#{randv}")
         facts
       end
 
@@ -85,12 +103,19 @@ module AcquisitionTracker
         user_entry['included_parts'].each.with_index do |ip, index|
           _, pid = ip.split('/')
           full_id = full_part_ids.detect { |fid| fid.start_with?(pid) }
-          facts += part_id_to_fact(user_entry, full_id, index, randv)
+          # facts += create_acquisition_facts_from_part_id(user_entry, full_id, index, randv)
+          facts += create_acquisition_facts(user_entry['date_acquired'], full_id, ':_mike', ":_acquisition_#{index}_#{randv}")
         end
         facts
       end
 
-      def self.part_id_to_fact(user_entry, full_id, indexv = rand, randv = rand, date_acquired = nil) # rubocop:disable Metrics/MethodLength
+      # Parameters:
+      #   requires:
+      #     user_entry - {
+      #      'date_acquired' => '2016-03-18 14:08:43 -0700',
+      #      ''
+      # }
+      def self.create_acquisition_facts_from_part_id(user_entry, part_id, indexv = rand, randv = rand, date_acquired = nil) # rubocop:disable Metrics/MethodLength
         facts = []
         acq_id = ":_acquisition_#{indexv}_#{randv}"
         time_fact = [
@@ -103,7 +128,7 @@ module AcquisitionTracker
           ':assert',
           acq_id,
           'acquisition/part_id',
-          full_id,
+          part_id,
         ]
         acquirer_fact = [
           ':assert',
@@ -120,7 +145,7 @@ module AcquisitionTracker
       def self.user_new_parts_to_facts(user_entry, randv = rand)
         facts = []
         user_entry['new_parts'].each.with_index do |np, index|
-          facts += create_new_part_facts(np, user_entry['date_acquired'], index, randv)
+          facts += create_part_and_acquisition_facts(np, user_entry['date_acquired'], index, randv)
         end
         facts
       end
@@ -145,27 +170,29 @@ module AcquisitionTracker
       #       [ ':assert', ':_acquisition_1_42', 'acquisition/acquirer, ':_mike ]
       #     ]
       #
-      def self.create_part_and_acquisition_facts(new_part, date_acquired, indexv = rand, randv = rand) # rubocop:disable Metrics/MethodLength
+      def self.create_part_and_acquisition_facts(new_part, date_acquired, indexv = rand, randv = rand)
         type = Translate.get_type(new_part)
-        id = new_part["#{type}/temp_id"]
-        temp_id = ":_#{type}_#{id}_#{randv}"
-
-        facts = create_part_facts(new_part, temp_id)
+        temp_id_key = "#{type}/temp_id"
+        temp_id_value = new_part.fetch(temp_id_key)
+        temp_id = ":_#{type}_#{temp_id_value}_#{randv}"
 
         acq_id = ":_acquisition_#{indexv}_#{randv}"
-        facts << [ ':assert', acq_id, 'acquisition/timestamp', date_acquired]
-        facts << [ ':assert', acq_id, 'acquisition/part_id', temp_id ]
-        facts <<  [':assert', acq_id, 'acquisition/acquirer', ':_mike' ] # TODO: hardcoded
-        facts
+        part_attributes = new_part.reject{|k, v| k == temp_id_key }
+
+        create_assert_facts_from_attributes(part_attributes, temp_id) +
+          create_acquisition_facts(date_acquired, temp_id, ':_mike', acq_id)
       end
 
-      def self.create_part_facts(part, id)
-        facts = []
-        part.each do |property, value|
-          next if property.include?('temp_id')
-          facts << [ ':assert', id, property, value ]
-        end
-        facts
+      def self.create_acquisition_facts(date_acquired, part_id, acquirer, id)
+        acquisition_attributes = {
+            'acquisition/timestamp' => date_acquired,
+            'acquisition/part_id' => part_id,
+            'acquisition/acquirer' => acquirer,
+        }
+        create_assert_facts_from_attributes(acquisition_attributes, id)
+      end
+      def self.create_assert_facts_from_attributes(attributes, id)
+        attributes.map { |property, value| [ ':assert', id, property, value ] }
       end
 
       def self.get_type(attrs)

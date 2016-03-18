@@ -148,7 +148,7 @@ module AcquisitionTracker
 
       def self.acquire_server(params)
         params = stringify_keys(params)
-        facts = params['included_parts'].flat_map { |pid| Translate.part_id_to_fact(params, pid) }
+        facts = params['included_parts'].flat_map { |pid| Translate.create_acquisition_facts_from_part_id(params, pid) }
         part_ids = facts
                         .select { |fact| fact[2] == 'acquisition/part_id' }
                         .map { |fact| fact[3] }
