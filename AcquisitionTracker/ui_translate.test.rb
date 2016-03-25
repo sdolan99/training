@@ -62,4 +62,23 @@ describe 'Ui::Translate.create_new_part_facts' do
     actual_facts = AcquisitionTracker::Ui::Translate.existing_part_user_entry_to_fact(user_entry, parts_list, index, randv)
     assert_equal expected_facts, actual_facts
   end
+
+  it 'creates acquisition facts from part ids' do
+    user_entry = {
+      'date_acquired' => '2016-03-18 14:08:43 -0700',
+    }
+    part_id = 'abc123zz'
+    index = 1
+    randv = 42
+
+    expected_facts = [
+      [ ':assert', ':_acquisition_1_42', 'acquisition/timestamp', '2016-03-18 14:08:43 -0700' ],
+      [ ':assert', ':_acquisition_1_42', 'acquisition/part_id', 'abc123zz' ],
+      [ ':assert', ':_acquisition_1_42', 'acquisition/acquirer', ':_mike' ],
+    ]
+
+    actual_facts = AcquisitionTracker::Ui::Translate.create_acquisition_facts_from_part_id(user_entry, part_id, index, randv)
+
+    assert_equal expected_facts, actual_facts
+  end
 end

@@ -74,8 +74,7 @@ module AcquisitionTracker
         facts = []
         full_part_ids = parts_list.map { |entity| entity['id'] }
         full_id = full_part_ids.detect { |fid| fid.start_with?(user_entry['existing_part_id']) }
-        facts += create_acquisition_facts_from_part_id(user_entry, full_id, index, randv, user_entry['date_acquired'])
-        # facts += create_acquisition_facts(user_entry['date_acquired'], full_id, ':_mike', ":_acquisition_#{index}_#{randv}")
+        facts += create_acquisition_facts(user_entry['date_acquired'], full_id, ':_mike', ":_acquisition_#{index}_#{randv}")
         facts
       end
 
@@ -113,33 +112,19 @@ module AcquisitionTracker
       #   requires:
       #     user_entry - {
       #      'date_acquired' => '2016-03-18 14:08:43 -0700',
-      #      ''
-      # }
-      def self.create_acquisition_facts_from_part_id(user_entry, part_id, indexv = rand, randv = rand, date_acquired = nil) # rubocop:disable Metrics/MethodLength
-        facts = []
-        acq_id = ":_acquisition_#{indexv}_#{randv}"
-        time_fact = [
-          ':assert',
-          acq_id,
-          'acquisition/timestamp',
-          user_entry['date_acquired'] || date_acquired,
-        ]
-        part_id_fact = [
-          ':assert',
-          acq_id,
-          'acquisition/part_id',
-          part_id,
-        ]
-        acquirer_fact = [
-          ':assert',
-          acq_id,
-          'acquisition/acquirer',
-          ':_mike', # TODO: hardcoded
-        ]
-        facts << time_fact
-        facts << part_id_fact
-        facts << acquirer_fact
-        facts
+      #     }
+      #     'part_id' => 'abc123zz',
+      #     'index' => 1
+      #     'randv' => 1
+      #  returns:
+      #    [
+      #      [ ":assert", ":_acquisition_1_1", "acquisition/timestamp", "2016-03-18 14:08:43 -070"],
+      #      [ ":assert", ":_acquisition_1_1", "acquisition/part_id", "abc123zz"],
+      #      [ ":assert", ":_acquisition_1_1", "acquisition/acquirer", ":_mike"]
+      #   ]
+      #
+      def self.create_acquisition_facts_from_part_id(user_entry, part_id, indexv = rand, randv = rand, date_acquired = nil)
+        create_acquisition_facts(user_entry['date_acquired'], part_id, ':_mike', ":_acquisition_#{indexv}_#{randv}")
       end
 
       def self.user_new_parts_to_facts(user_entry, randv = rand)
@@ -191,6 +176,7 @@ module AcquisitionTracker
         }
         create_assert_facts_from_attributes(acquisition_attributes, id)
       end
+
       def self.create_assert_facts_from_attributes(attributes, id)
         attributes.map { |property, value| [ ':assert', id, property, value ] }
       end
