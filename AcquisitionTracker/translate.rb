@@ -43,14 +43,10 @@ module AcquisitionTracker
         user_entry
       end
 
+      # Validation of user_entry should already have been completed
       def self.part_entry_to_facts(user_entry, parts_list, randv = rand)
-        facts = []
-
-        if user_entry.key?('new_part')
-          facts += create_part_and_acquisition_facts(user_entry['new_part'], user_entry['date_acquired'], randv)
-        else
-          facts += existing_part_user_entry_to_fact(user_entry, parts_list)
-        end
+        facts = existing_part_user_entry_to_fact(user_entry, parts_list)
+        facts += create_part_and_acquisition_facts(user_entry['new_part'], user_entry['date_acquired'], randv) if user_entry.key?('new_part')
         facts
       end
 
