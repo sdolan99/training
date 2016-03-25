@@ -34,7 +34,7 @@ module AcquisitionTracker
       tmp_path = make_tmpfile_for_editing('ac-addserver.yaml', file_contents)
       user_entry = read_entry_until_valid { Translate.read_user_entry(tmp_path) }
 
-      add_server_entry = Translate.write_new_add_server_entry(user_entry, parts_list)
+      add_server_entry = Translate.create_journal_entry(user_entry, parts_list, 'acquire_server')
       Journal.write_entry(add_server_entry)
       Commands.hydrate([add_server_entry])
     end
@@ -46,7 +46,7 @@ module AcquisitionTracker
       file_contents = evaluate_template(AddPartTemplate, context)
       tmp_path = make_tmpfile_for_editing('ac-addpart.yaml', file_contents)
       user_entry = read_entry_until_valid { Translate.read_user_add_part_entry(tmp_path) }
-      add_part_entry = Translate.write_new_add_part_entry(user_entry, parts_list)
+      add_part_entry = Translate.create_journal_entry(user_entry, parts_list, 'acquire_part')
 
       Journal.write_entry(add_part_entry)
       Commands.hydrate([add_part_entry])

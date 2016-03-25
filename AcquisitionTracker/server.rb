@@ -33,7 +33,7 @@ module AcquisitionTracker
       user_entry = {}
       user_entry['existing_part_id'] = params[:existing_part_id]
       user_entry['date_acquired'] = params[:date_acquired]
-      add_part_entry = Ui::Translate.write_new_add_part_entry(user_entry, Queries.all_parts)
+      add_part_entry = Ui::Translate.create_journal_entry(user_entry, Queries.all_parts, 'acquire_part')
       Journal.write_entry(add_part_entry)
       Commands.hydrate([add_part_entry])
       redirect '/'

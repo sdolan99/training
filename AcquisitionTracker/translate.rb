@@ -4,24 +4,14 @@ module AcquisitionTracker
   module Ui
     # Manipulate journal entries and user input
     module Translate # rubocop:disable Metrics/ModuleLength
-      def self.write_new_add_part_entry(user_entry, parts_list)
+      def self.create_journal_entry(user_entry, parts_list, command)
         journal_entry = {
           'timestamp' => Time.now,
-          'command_name' => 'acquire_part',
-          'facts' => part_entry_to_facts(user_entry, parts_list),
-        }
-        journal_entry
-      end
-
-      def self.write_new_add_server_entry(user_entry, parts_list)
-        journal_entry = {
-          'timestamp' => Time.now,
-          'command_name' => 'acquire_server',
+          'command_name' => command,
           'facts' => user_entry_to_facts(user_entry, parts_list),
         }
         journal_entry
       end
-
       def self.read_user_entry(tmp_path)
         user_entry = editor_entry(tmp_path)
         errors = Ui::Validation.add_server_data(user_entry)
