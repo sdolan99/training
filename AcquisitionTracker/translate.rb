@@ -23,23 +23,24 @@ module AcquisitionTracker
       end
 
       def self.read_user_entry(tmp_path)
-        editor = ENV['EDITOR'] || 'vi'
-        open_editor_command = "#{editor} #{tmp_path}"
-        system(open_editor_command)
-        user_entry_yaml = File.read(tmp_path)
-        user_entry = YAML.load(user_entry_yaml)
+        user_entry = editor_entry(tmp_path)
         errors = Ui::Validation.add_server_data(user_entry)
         [errors, user_entry]
       end
 
       def self.read_user_add_part_entry(tmp_path)
+        user_entry = editor_entry(tmp_path)
+        errors = Ui::Validation.add_part_user_data(user_entry)
+        [errors, user_entry]
+      end
+
+      def self.editor_entry(tmp_path)
         editor = ENV['EDITOR'] || 'vi'
         open_editor_command = "#{editor} #{tmp_path}"
         system(open_editor_command)
         user_entry_yaml = File.read(tmp_path)
         user_entry = YAML.load(user_entry_yaml)
-        errors = Ui::Validation.add_part_user_data(user_entry)
-        [errors, user_entry]
+        user_entry
       end
 
       def self.part_entry_to_facts(user_entry, parts_list, randv = rand)
@@ -78,21 +79,13 @@ module AcquisitionTracker
         facts
       end
 
-      def self.user_entry_to_facts(user_entry, parts_list, randv = rand) # rubocop:disable Metrics/MethodLength
+      def self.user_entry_to_facts(user_entry, parts_list, randv = rand)
         facts = []
         facts += user_new_parts_to_facts(user_entry, randv) if user_entry['new_parts']
         facts += user_included_parts_to_facts(user_entry, parts_list, randv) if user_entry['included_parts']
-        part_ids = facts
-                   .select { |fact| fact[2] == 'acquisition/part_id' }
-                   .map { |fact| fact[3] }
-                   .uniq
-        group_fact = [
-          ':assert',
-          ":_server_#{randv}",
-          'group/units',
-          part_ids,
-        ]
-        facts << group_fact
+        part_ids = uniq_part_ids(facts)
+        id = ":_server_#{randv}"
+        facts += create_assert_facts_from_attributes({ 'group/units' => part_ids}, id)
         facts
       end
 
@@ -102,7 +95,6 @@ module AcquisitionTracker
         user_entry['included_parts'].each.with_index do |ip, index|
           _, pid = ip.split('/')
           full_id = full_part_ids.detect { |fid| fid.start_with?(pid) }
-          # facts += create_acquisition_facts_from_part_id(user_entry, full_id, index, randv)
           facts += create_acquisition_facts(user_entry['date_acquired'], full_id, ':_mike', ":_acquisition_#{index}_#{randv}")
         end
         facts
@@ -183,6 +175,13 @@ module AcquisitionTracker
 
       def self.get_type(attrs)
         attrs.keys.grep(%r{/}).first.split('/').first
+      end
+
+      def self.uniq_part_ids(facts)
+        facts
+          .select { |fact| fact[2] == 'acquisition/part_id' }
+          .map { |fact| fact[3] }
+          .uniq
       end
     end
   end
